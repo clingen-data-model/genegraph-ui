@@ -1,4 +1,4 @@
-(ns curator.pages.gene-validity.subs
+(ns genegraph-ui.pages.gene-validity.subs
   (:require [re-frame.core :as re-frame]))
 
 (re-frame/reg-sub

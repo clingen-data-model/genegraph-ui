@@ -1,4 +1,4 @@
-(ns curator.pages.home.events
+(ns genegraph-ui.pages.home.events
   (:require [re-frame.core :as re-frame]
             [re-graph.core :as re-graph]
             [cuerdas.core :as s]

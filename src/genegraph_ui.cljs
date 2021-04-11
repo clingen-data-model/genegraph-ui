@@ -1,15 +1,14 @@
-(ns curator
+(ns genegraph-ui
   (:require ["firebase/app" :as firebase-app]
             ["firebase/auth"] ; must be loaded for firebase-app.auth to work
             [reagent.core :as reagent]
             [reagent.dom :as rdom]
             [re-frame.core :as re-frame :refer [subscribe dispatch]]
             [re-graph.core :as re-graph]
-            [curator.pages.home.views :as home]
-            [curator.common.views :as common-views]
-            [curator.routes :as routes]
-            [curator.config :refer [firebase-config]]
-            ))
+            [genegraph-ui.pages.home.views :as home]
+            [genegraph-ui.common.views :as common-views]
+            [genegraph-ui.routes :as routes]
+            [genegraph-ui.config :refer [firebase-config]])) 
 
 (enable-console-print!)
 
@@ -35,7 +34,8 @@
   (re-frame/dispatch-sync [::initialize-db])
   (let [app-config (get firebase-config (keyword FIREBASE_CONFIG_NAME))]
     (js/console.log "app-config:" (clj->js app-config))
-    (.initializeApp firebase-app (clj->js app-config)))
+    (.initializeApp firebase-app (clj->js app-config))
+    (js/console.log "firebase initialized"))
   (.log js/console "backend-ws: " BACKEND_WS ", backend-http: " BACKEND_HTTP)
   (re-frame/dispatch [::re-graph/init
                       {:ws {:url BACKEND_WS}

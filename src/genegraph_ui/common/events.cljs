@@ -1,4 +1,4 @@
-(ns curator.common.events
+(ns genegraph-ui.common.events
   (:require ["firebase/app" :as firebase]
             [re-frame.core :as re-frame]
             [re-graph.core :as re-graph]))

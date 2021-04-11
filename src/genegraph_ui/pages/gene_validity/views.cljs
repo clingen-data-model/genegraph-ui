@@ -1,7 +1,7 @@
-(ns curator.pages.gene-validity.views
+(ns genegraph-ui.pages.gene-validity.views
   (:require [re-frame.core :as re-frame :refer [subscribe dispatch]]
-            [curator.common.views :as common-views]
-            [curator.pages.gene-validity.subs :as subs]))
+            [genegraph-ui.common.views :as common-views]
+            [genegraph-ui.pages.gene-validity.subs :as subs]))
 
 
 (defn title [assertion]

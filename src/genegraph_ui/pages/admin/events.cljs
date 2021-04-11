@@ -1,4 +1,4 @@
-(ns curator.pages.admin.events
+(ns genegraph-ui.pages.admin.events
   (:require [re-frame.core :as re-frame]
             [re-graph.core :as re-graph]
             [cljs.pprint]))

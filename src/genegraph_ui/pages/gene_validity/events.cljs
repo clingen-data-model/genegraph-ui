@@ -1,4 +1,4 @@
-(ns curator.pages.gene-validity.events
+(ns genegraph-ui.pages.gene-validity.events
   (:require [re-frame.core :as re-frame]
             [re-graph.core :as re-graph]))
 

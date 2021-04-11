@@ -1,9 +1,9 @@
-(ns curator.pages.home.views
+(ns genegraph-ui.pages.home.views
   (:require [re-frame.core :as re-frame :refer [subscribe dispatch]]
-            [curator.common.views :as common-views]
-            [curator.pages.home.subs :as subs]
-            [curator.common.subs :as common-subs]
-            [curator.pages.home.events]
+            [genegraph-ui.common.views :as common-views]
+            [genegraph-ui.pages.home.subs :as subs]
+            [genegraph-ui.common.subs :as common-subs]
+            [genegraph-ui.pages.home.events]
             [reitit.frontend.easy :as rfe]))
 
 

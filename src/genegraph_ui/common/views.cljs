@@ -1,6 +1,6 @@
-(ns curator.common.views
-  (:require [curator.common.events :as common-events]
-            [curator.common.subs :as common-subs]
+(ns genegraph-ui.common.views
+  (:require [genegraph-ui.common.events :as common-events]
+            [genegraph-ui.common.subs :as common-subs]
             [re-frame.core :as re-frame :refer [subscribe dispatch]]
             [reitit.frontend.easy :as rfe]))
 

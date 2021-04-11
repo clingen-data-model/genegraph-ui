@@ -1,4 +1,4 @@
-(ns curator.routes
+(ns genegraph-ui.routes
   (:require [re-frame.core :as re-frame]
             [re-graph.core :as re-graph]
             [reagent.core :as reagent]
@@ -7,12 +7,12 @@
             [reitit.frontend :as rf]
             [reitit.frontend.controllers :as rfc]
             [reitit.frontend.easy :as rfe]
-            [curator.pages.home.views :as home]
-            [curator.pages.admin.views :as admin]
-            [curator.pages.genes.views :as genes]
-            [curator.pages.gene-validity.views :as gene-validity]
-            [curator.pages.genes.events :as gene-events]
-            [curator.pages.gene-validity.events :as gene-validity-events]))
+            [genegraph-ui.pages.home.views :as home]
+            [genegraph-ui.pages.admin.views :as admin]
+            [genegraph-ui.pages.genes.views :as genes]
+            [genegraph-ui.pages.gene-validity.views :as gene-validity]
+            [genegraph-ui.pages.genes.events :as gene-events]
+            [genegraph-ui.pages.gene-validity.events :as gene-validity-events]))
 
 ;;; Events ;;;
 

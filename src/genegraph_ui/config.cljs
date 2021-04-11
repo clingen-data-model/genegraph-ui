@@ -1,4 +1,4 @@
-(ns curator.config)
+(ns genegraph-ui.config)
 
 (def firebase-config
   {:clingen-dev {:apiKey "AIzaSyDj-cOdeUUNoaiA1DiUu9uLfRkrZ32TWJo",

@@ -1,7 +1,7 @@
-(ns curator.pages.admin.views
-  (:require [curator.common.views :as common-views]
-            [curator.pages.admin.events :as events]
-            [curator.pages.admin.subs :as subs]
+(ns genegraph-ui.pages.admin.views
+  (:require [genegraph-ui.common.views :as common-views]
+            [genegraph-ui.pages.admin.events :as events]
+            [genegraph-ui.pages.admin.subs :as subs]
             [re-frame.core :refer [dispatch subscribe]]
             [clojure.browser.dom :as dom]))
 

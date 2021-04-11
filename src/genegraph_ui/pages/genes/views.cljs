@@ -1,7 +1,7 @@
-(ns curator.pages.genes.views
+(ns genegraph-ui.pages.genes.views
   (:require [re-frame.core :as re-frame :refer [subscribe dispatch]]
-            [curator.common.views :as common-views]
-            [curator.pages.genes.subs :as subs]
+            [genegraph-ui.common.views :as common-views]
+            [genegraph-ui.pages.genes.subs :as subs]
             [reitit.frontend.easy :as rfe]
             ))
 

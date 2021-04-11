@@ -9,8 +9,7 @@
   },
   "dependencies": {
     "create-react-class": "^15.6.3",
-    "firebase": "8.3.0",
-    "firebase-tools": "^9.7.0",
+    "firebase": "7.24.0",
     "highlight.js": "10.6.0",
     "react": "^16.13.0",
     "react-dom": "^16.13.0",
@@ -19,7 +18,7 @@
     "shadow-cljs": "^2.11.23",
     "xregexp": "^5.0.1"
   },
-  "name": "curator",
+  "name": "genegraph-ui",
   "version": "0.0.1",
   "private": true
 }

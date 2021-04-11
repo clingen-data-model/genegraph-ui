@@ -1,4 +1,4 @@
-(ns curator.pages.home.subs
+(ns genegraph-ui.pages.home.subs
   (:require [re-frame.core :as re-frame]
             [clojure.string :as s]))
 

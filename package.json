@@ -1,0 +1,25 @@
+{
+  "scripts": {
+    "watch": "shadow-cljs watch app-local;",
+    "release": "shadow-cljs release ",
+    "release-local": "shadow-cljs release app-local;",
+    "release-dev": "shadow-cljs release app-dev;",
+    "server": "shadow-cljs server;",
+    "maven": "shadow-cljs pom;"
+  },
+  "dependencies": {
+    "create-react-class": "^15.6.3",
+    "firebase": "8.3.0",
+    "firebase-tools": "^9.7.0",
+    "highlight.js": "10.6.0",
+    "react": "^16.13.0",
+    "react-dom": "^16.13.0",
+    "react-flip-move": "^3.0.1",
+    "react-highlight.js": "1.0.7",
+    "shadow-cljs": "^2.11.23",
+    "xregexp": "^5.0.1"
+  },
+  "name": "curator",
+  "version": "0.0.1",
+  "private": true
+}

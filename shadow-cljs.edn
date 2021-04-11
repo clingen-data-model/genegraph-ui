@@ -1,0 +1,27 @@
+;; shadow-cljs configuration
+{:source-paths ["src"]
+ :dependencies [[re-frame "1.1.1"]
+                [re-graph "0.1.14"]
+                [metosin/reitit "0.5.10"]
+                [funcool/cuerdas "2.2.0"]
+                ]
+ :nrepl {:port 55555}
+ :dev-http {8080 "public/"}
+ :builds {:app-local {:output-dir "public/js"
+                      :target :browser
+                      :release {:closure-defines {curator.FIREBASE_CONFIG_NAME "clingen-dev"
+                                                  curator.BACKEND_WS "ws://localhost:8888/ws"
+                                                  curator.BACKEND_HTTP "http://localhost:8888/api"}}
+                      :modules {:curator {:init-fn curator/init}}}
+          :app-dev {:output-dir "public/js"
+                    :target :browser
+                    :release {:closure-defines {curator.FIREBASE_CONFIG_NAME "clingen-dev"
+                                                curator.BACKEND_WS "wss://genegraph-gvdev.clingen.app/ws"
+                                                curator.BACKEND_HTTP "https://genegraph-gvdev.clingen.app/api"}}
+                    :modules {:curator {:init-fn curator/init}}}
+          :app-stage {:output-dir "public/js"
+                      :target :browser
+                      :release {:closure-defines {curator.FIREBASE_CONFIG_NAME "clingen-stage"
+                                                  curator.BACKEND_WS "wss://genegraph-stage.clingen.app/ws"
+                                                  curator.BACKEND_HTTP "https://genegraph-stage.clingen.app/api"}}
+                      :modules {:curator {:init-fn curator/init}}}}}

@@ -1,4 +1,4 @@
-(ns genegraph-ui.pages.genes.events
+(ns genegraph-ui.pages.gene.events
   (:require [re-frame.core :as re-frame]
             [re-graph.core :as re-graph]
             [cljs.pprint]))

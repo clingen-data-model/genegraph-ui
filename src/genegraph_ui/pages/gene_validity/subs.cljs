@@ -5,3 +5,8 @@
  ::assertion
  (fn [db]
    (:gene_validity_assertion db)))
+
+(re-frame/reg-sub
+ ::assertion-list
+ (fn [db]
+   (:gene_validity_assertions db)))

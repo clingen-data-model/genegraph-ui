@@ -56,3 +56,48 @@
            gene-validity-query
            {:id id}
            [:gene-validity/recieve-assertion-query]]]]}))
+
+
+(def gene-validity-list-query
+  "{
+  gene_validity_assertions {
+    count
+    curation_list {
+      curie
+      gene {
+        curie
+        label
+      }
+      disease {
+        curie
+        label
+      }
+      mode_of_inheritance {
+        curie
+        label
+      }
+      classification {
+        curie
+        label
+      }
+    }
+  }
+}")
+
+
+(re-frame/reg-event-db
+ :gene-validity/recieve-assertion-list
+ (fn [db [_ {:keys [data errors]}]]
+   (js/console.log "Recieved assertion list ")
+   (cljs.pprint/pprint errors)
+   (merge db data)))
+
+(re-frame/reg-event-fx
+ :gene-validity/request-assertion-list
+ (fn [_ _]
+   (js/console.log "Requesting assertion list")
+   {:fx [[:dispatch
+          [::re-graph/query
+           gene-validity-list-query
+           {}
+           [:gene-validity/recieve-assertion-list]]]]}))

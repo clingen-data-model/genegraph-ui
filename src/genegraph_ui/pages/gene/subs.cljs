@@ -1,4 +1,4 @@
-(ns genegraph-ui.pages.genes.subs
+(ns genegraph-ui.pages.gene.subs
   (:require [re-frame.core :as re-frame]))
 
 (re-frame/reg-sub

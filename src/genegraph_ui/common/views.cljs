@@ -7,10 +7,12 @@
 (defn navbar []
   (let [user @(subscribe [::common-subs/user])
         admin-user @(subscribe [::common-subs/user-is-admin])]
-    [:nav.navbar {:role "navigation"}
+    [:nav.navbar.is-fixed-top {:role "navigation"}
      [:div.navbar-brand
       [:a.navbar-item {:href (rfe/href :home)}
-       [:img {:src "/images/logo.svg"}]]]
+       [:img {:src "/images/logo.svg"}]]
+      [:a.navbar-item {:href (rfe/href :home)}
+       [:h5.title.is-6 "genegraph-ui"]]]
      [:div.navbar-menu
       (when admin-user
         [:a.navbar-item {:href (rfe/href :admin)} "admin"])]

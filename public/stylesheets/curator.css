@@ -1,6 +1,11 @@
 .home-search-main {
-    background-image: url("/images/giraffe-bg.jpg");
+    background-image: url("/images/wrap-bg.jpg");
     background-size: cover;
     background-position: center center;
+    background-attachment: fixed;
     height: 100vh;
+}
+
+.g-navbar {
+    opacity: 0.1 ;
 }

@@ -1,17 +1,17 @@
 (ns genegraph-ui.pages.gene-validity.views
   (:require [re-frame.core :as re-frame :refer [subscribe dispatch]]
             [genegraph-ui.common.views :as common-views]
-            [genegraph-ui.pages.gene-validity.subs :as subs]))
+            [genegraph-ui.pages.gene-validity.subs :as subs]
+            [reitit.frontend.easy :as rfe]))
 
 
 (defn title [assertion]
-  [:section.hero
-   [:div.hero-body
-    [:h1.title (get-in assertion [:gene :label])
-     " / "
-     (get-in assertion [:disease :label])]
-    [:div.subtitle
-     (get-in assertion [:mode_of_inheritance :label])]]])
+  [:div
+   [:h1.title (get-in assertion [:gene :label])
+    " / "
+    (get-in assertion [:disease :label])]
+   [:div.subtitle
+    (get-in assertion [:mode_of_inheritance :label])]])
 
 (defn details [assertion]
   [:div
@@ -39,10 +39,28 @@
 
 (defn gene-validity-assertion []
   (let [assertion @(subscribe [::subs/assertion])]
-    [:div
-     [:section.section (common-views/navbar)]
-     (title assertion)
-     [:section.section
-      (details assertion)
-      [:hr]
+    [:section.section (common-views/navbar)
+     [:div.box
+      (title assertion)]
+     [:div.box
+      (details assertion)]
+     [:div.box
       (variant-level-evidence assertion)]]))
+
+(defn gene-validity-assertions []
+  (let [assertion-list @(subscribe [::subs/assertion-list])]
+    [:section.section (common-views/navbar)
+     [:div.box
+      [:h1.title (:count assertion-list)  " Gene Validity Assertions"]]
+     [:div.box 
+      (for [a (:curation_list assertion-list)]
+        ^{:key a}
+        [:div.columns
+         [:div.column
+          [:a {:href (rfe/href :gene {:id (:curie (get-in a [:gene :curie]))})}
+           (get-in a [:gene :label])]]
+         [:div.column (get-in a [:disease :label])]
+         [:div.column (get-in a [:mode_of_inheritance :label])]
+         [:div.column
+          [:a {:href (rfe/href :gene-validity {:id (:curie a)})}
+                       (get-in a [:classification :label])]]])]]))

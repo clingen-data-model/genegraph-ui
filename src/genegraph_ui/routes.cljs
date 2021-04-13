@@ -9,9 +9,9 @@
             [reitit.frontend.easy :as rfe]
             [genegraph-ui.pages.home.views :as home]
             [genegraph-ui.pages.admin.views :as admin]
-            [genegraph-ui.pages.genes.views :as genes]
+            [genegraph-ui.pages.gene.views :as genes]
             [genegraph-ui.pages.gene-validity.views :as gene-validity]
-            [genegraph-ui.pages.genes.events :as gene-events]
+            [genegraph-ui.pages.gene.events :as gene-events]
             [genegraph-ui.pages.gene-validity.events :as gene-validity-events]))
 
 ;;; Events ;;;
@@ -62,8 +62,8 @@
                 (js/console.log "Entering admin page"))
        ;; Teardown can be done here.
        :stop  (fn [& params] (js/console.log "Leaving admin page"))}]}]
-   ["genes/:id"
-    {:name      :genes
+   ["gene/:id"
+    {:name      :gene
      :view      genes/genes
      :link-text "genes"
      :controllers
@@ -75,19 +75,26 @@
                  [:gene/request-gene (get-in params [:path :id])]))
        ;; Teardown can be done here.
        :stop  (fn [& params] (js/console.log "Leaving genes page"))}]}]
+   ["gene_validity"
+    {:name :gene-validity-list
+     :view gene-validity/gene-validity-assertions
+     :link-text "gene validity"
+     :controllers
+     [{ :start (fn [params]
+                 (js/console.log "entering gene validity list page")
+                 (re-frame/dispatch
+                  [:gene-validity/request-assertion-list]))
+       :stop  (fn [& params] (js/console.log "Leaving gene validity list page"))}]}]
    ["gene_validity/:id"
     {:name      :gene-validity
      :view      gene-validity/gene-validity-assertion
      :link-text "gene validity"
      :controllers
-     [{;; Do whatever initialization needed for home page
-       ;; I.e (re-frame/dispatch [::events/load-something-with-ajax])
-       :parameters {:path [:id]}
+     [{:parameters {:path [:id]}
        :start (fn [params]
                 (js/console.log "entering gene validity page")
                 (re-frame/dispatch
                  [:gene-validity/request-assertion (get-in params [:path :id])]))
-       ;; Teardown can be done here.
        :stop  (fn [& params] (js/console.log "Leaving gene validity page"))}]}]   ])
 
 (defn on-navigate [new-match]

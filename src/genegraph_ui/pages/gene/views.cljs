@@ -1,7 +1,7 @@
-(ns genegraph-ui.pages.genes.views
+(ns genegraph-ui.pages.gene.views
   (:require [re-frame.core :as re-frame :refer [subscribe dispatch]]
             [genegraph-ui.common.views :as common-views]
-            [genegraph-ui.pages.genes.subs :as subs]
+            [genegraph-ui.pages.gene.subs :as subs]
             [reitit.frontend.easy :as rfe]
             ))
 
@@ -23,9 +23,10 @@
 (defn genes [] 
   (let [gene @(subscribe [::subs/gene])]
     [:div
-     [:section.section (common-views/navbar)]
-     [:section.section
-      [:div.columns
-       [:div.column
-        [:p.title (:label gene)]]]
-      (gene-validity-assertions (:gene_validity_assertions gene))]]))
+     [:section.section (common-views/navbar)
+      [:div.box
+       [:div.columns
+        [:div.column
+         [:p.title (:label gene)]]]]
+      [:div.box
+       (gene-validity-assertions (:gene_validity_assertions gene))]]]))

@@ -20,3 +20,18 @@
  ::user-is-admin
  (fn [db]
    (:admin-user db)))
+
+(re-frame/reg-sub
+ ::gene-list
+ (fn [db]
+   (get-in db [:genes :gene_list])))
+
+(re-frame/reg-sub
+ ::affiliation-list
+ (fn [db]
+   (get-in db [:affiliations :agent_list])))
+
+(re-frame/reg-sub
+ ::current-search-option
+ (fn [db]
+   (:common/search-option db)))

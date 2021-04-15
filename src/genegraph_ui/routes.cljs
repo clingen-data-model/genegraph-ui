@@ -9,7 +9,8 @@
             [reitit.frontend.easy :as rfe]
             [genegraph-ui.pages.home.views :as home]
             [genegraph-ui.pages.admin.views :as admin]
-            [genegraph-ui.pages.gene.views :as genes]
+            [genegraph-ui.pages.gene.views :as gene]
+            [genegraph-ui.pages.disease.views :as disease]
             [genegraph-ui.pages.gene-validity.views :as gene-validity]
             [genegraph-ui.pages.gene.events :as gene-events]
             [genegraph-ui.pages.gene-validity.events :as gene-validity-events]))
@@ -62,19 +63,32 @@
                 (js/console.log "Entering admin page"))
        ;; Teardown can be done here.
        :stop  (fn [& params] (js/console.log "Leaving admin page"))}]}]
-   ["gene/:id"
+   ["gene/:curie"
     {:name      :gene
-     :view      genes/genes
+     :view      gene/gene
      :link-text "genes"
      :controllers
      [{;; Do whatever initialization needed for home page
        ;; I.e (re-frame/dispatch [::events/load-something-with-ajax])
-       :parameters {:path [:id]}
+       :parameters {:path [:curie]}
        :start (fn [params]
                 (re-frame/dispatch
-                 [:gene/request-gene (get-in params [:path :id])]))
+                 [:gene/request-gene (get-in params [:path :curie])]))
        ;; Teardown can be done here.
        :stop  (fn [& params] (js/console.log "Leaving genes page"))}]}]
+   ["disease/:curie"
+    {:name      :disease
+     :view      disease/disease
+     :link-text "disease"
+     :controllers
+     [{;; Do whatever initialization needed for home page
+       ;; I.e (re-frame/dispatch [::events/load-something-with-ajax])
+       :parameters {:path [:curie]}
+       :start (fn [params]
+                (re-frame/dispatch
+                 [:disease/request-disease (get-in params [:path :curie])]))
+       ;; Teardown can be done here.
+       :stop  (fn [& params] (js/console.log "Leaving disease page"))}]}]
    ["gene_validity"
     {:name :gene-validity-list
      :view gene-validity/gene-validity-assertions
@@ -85,16 +99,16 @@
                  (re-frame/dispatch
                   [:gene-validity/request-assertion-list]))
        :stop  (fn [& params] (js/console.log "Leaving gene validity list page"))}]}]
-   ["gene_validity/:id"
+   ["gene_validity/:curie"
     {:name      :gene-validity
      :view      gene-validity/gene-validity-assertion
      :link-text "gene validity"
      :controllers
-     [{:parameters {:path [:id]}
+     [{:parameters {:path [:curie]}
        :start (fn [params]
                 (js/console.log "entering gene validity page")
                 (re-frame/dispatch
-                 [:gene-validity/request-assertion (get-in params [:path :id])]))
+                 [:gene-validity/request-assertion (get-in params [:path :curie])]))
        :stop  (fn [& params] (js/console.log "Leaving gene validity page"))}]}]   ])
 
 (defn on-navigate [new-match]

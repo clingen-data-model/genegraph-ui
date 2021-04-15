@@ -39,26 +39,35 @@
 
 (defn gene-validity-assertion []
   (let [assertion @(subscribe [::subs/assertion])]
-    [:section.section (common-views/navbar)
-     [:div.box
-      (title assertion)]
-     [:div.box
-      (details assertion)]
-     [:div.box
-      (variant-level-evidence assertion)]]))
+    [:section.section.home-search-main
+     ;; (common-views/navbar)
+     [:div.columns
+      [:div.column.is-one-third
+       (common-views/side-panel)]
+      [:div.column.is-two-thirds
+       [:div.box
+        (title assertion)]
+       [:div.box
+        (details assertion)]
+       [:div.box
+        (variant-level-evidence assertion)]]]]))
+
+(defn gene-link [gene]
+  (when gene
+    [:a {:href (rfe/href :gene gene)}
+     (:label gene)]))
 
 (defn gene-validity-assertions []
   (let [assertion-list @(subscribe [::subs/assertion-list])]
-    [:section.section (common-views/navbar)
+    [:section.section
+     ;; (common-views/navbar)
      [:div.box
       [:h1.title (:count assertion-list)  " Gene Validity Assertions"]]
      [:div.box 
       (for [a (:curation_list assertion-list)]
         ^{:key a}
         [:div.columns
-         [:div.column
-          [:a {:href (rfe/href :gene {:id (:curie (get-in a [:gene :curie]))})}
-           (get-in a [:gene :label])]]
+         [:div.column (gene-link (:gene a))]
          [:div.column (get-in a [:disease :label])]
          [:div.column (get-in a [:mode_of_inheritance :label])]
          [:div.column

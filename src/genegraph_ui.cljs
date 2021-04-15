@@ -25,10 +25,9 @@
 (re-frame/reg-event-db
   ::initialize-db
   (fn [db _]
-    (if db
-      db
-      {:current-route nil
-       :home/search-topic :gene})))
+    {:current-route nil
+     :home/search-topic :gene
+     :common/search-option :gene}))
 
 (defn ^:export init []
   (re-frame/dispatch-sync [::initialize-db])

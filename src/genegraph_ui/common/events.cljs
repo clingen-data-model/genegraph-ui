@@ -77,3 +77,75 @@
       :fx [[:common/retrieve-id-token]]}
      {:db (assoc (:db cofx) :user nil)})))
 
+(def search-queries
+  {:gene   "query($text: String) {
+  genes(text: $text) {
+    count
+    gene_list {
+      curie
+      label
+      curation_activities
+      gene_validity_assertions {
+        curie
+        disease {
+          curie
+          label
+        }
+      }
+    }
+  }
+}"
+   :affiliation
+     "query ($text: String) {
+  affiliations(text: $text)
+  {
+    agent_list {
+      curie
+      label
+      gene_validity_assertions {
+        curation_list {
+          curie
+          gene {
+            label
+            curie
+          }
+          disease {
+            label
+            curie
+          }
+        }
+      }
+    }
+  }
+}"
+   :disease
+   "query ($text: String) {
+  diseases(text: $text) {
+    disease_list {
+      curie
+      label
+    }
+  }
+}"})
+
+(re-frame/reg-event-db
+ :common/recieve-search-result
+ (fn [db [_ {:keys [data errors]}]]
+   (js/console.log "recieved search result")
+   (cljs.pprint/pprint data)
+   (merge db data)))
+
+(re-frame/reg-event-fx
+ :common/search
+ (fn [{:keys [db]} [_ search-text]]
+   (js/console.log "submitted search result " search-text)
+   {:fx [[:dispatch
+          [::re-graph/query
+           (get search-queries (:common/search-option db))
+           {:text search-text}
+           [:common/recieve-search-result]]]]}))
+
+(re-frame/reg-event-db
+ :common/select-search-option
+ (fn [db [_ option]]
+   (assoc db :common/search-option option)))

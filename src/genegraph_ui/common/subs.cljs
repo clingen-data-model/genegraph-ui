@@ -35,3 +35,8 @@
  ::current-search-option
  (fn [db]
    (:common/search-option db)))
+
+(re-frame/reg-sub
+ ::current-page
+ (fn [db]
+   (or (:common/page db) 1)))

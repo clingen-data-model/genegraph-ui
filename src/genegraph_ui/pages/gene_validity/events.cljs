@@ -36,6 +36,9 @@
           curie
           label
        }
+      evidence_items {
+        label
+      }
      }
   }
 }")

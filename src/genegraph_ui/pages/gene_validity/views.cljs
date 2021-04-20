@@ -7,9 +7,16 @@
 
 (defn title [assertion]
   [:div
-   [:h1.title (get-in assertion [:gene :label])
+   [:h1.title
+    [:a
+     {:title (get-in assertion [:gene :curie])
+     :href (rfe/href :gene (:gene assertion))}
+     (get-in assertion [:gene :label])]
     " / "
-    (get-in assertion [:disease :label])]
+    [:a
+     {:title (get-in assertion [:disease :curie])
+      :href (rfe/href :disease (:disease assertion))}
+     (get-in assertion [:disease :label])]]
    [:div.subtitle
     (get-in assertion [:mode_of_inheritance :label])]])
 
@@ -18,6 +25,7 @@
    [:div.columns
     [:div.column.is-one-fifth "score:"]
     [:div.column.has-text-weight-semibold
+     {:title (:curie assertion)}
      (get-in assertion [:classification :label])]]
    [:div.columns
     [:div.column.is-one-fifth "working group:"]
@@ -35,11 +43,12 @@
      ^{:key el}[:div.columns
                 [:div.column.is-one-fifth.has-text-weight-semibold (:score el) " points"]
                 [:div.column.is-one-fifth (get-in el [:type 0 :label])]
-                [:div.column.is-three-fifths (:description el)]])])
+                [:div.column.is-one-fifth (get-in el [:evidence_items 0 :label])]                
+                [:div.column.is-two-fifths (:description el)]])])
 
 (defn gene-validity-assertion []
   (let [assertion @(subscribe [::subs/assertion])]
-    [:section.section.home-search-main
+    [:section.section
      ;; (common-views/navbar)
      [:div.columns
       [:div.column.is-one-third

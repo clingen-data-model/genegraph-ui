@@ -96,13 +96,15 @@
   }
 }"
    :affiliation
-     "query ($text: String) {
+   "query ($text: String, $offset: Int = 0) {
   affiliations(text: $text)
   {
     agent_list {
       curie
       label
-      gene_validity_assertions {
+      gene_validity_assertions(offset: $offset,
+        sort: {field: GENE_LABEL}) {
+        count
         curation_list {
           curie
           gene {
@@ -139,7 +141,10 @@
  :common/search
  (fn [{:keys [db]} [_ search-text]]
    (js/console.log "submitted search result " search-text)
-   {:fx [[:dispatch
+   {:db (assoc db
+               :common/page 1
+               :common/search-text search-text)
+    :fx [[:dispatch
           [::re-graph/query
            (get search-queries (:common/search-option db))
            {:text search-text}
@@ -149,3 +154,14 @@
  :common/select-search-option
  (fn [db [_ option]]
    (assoc db :common/search-option option)))
+
+(re-frame/reg-event-fx
+ :common/select-page
+ (fn [{:keys [db]} [_ page]]
+   {:db (assoc db :common/page page)
+    :fx [[:dispatch
+          [::re-graph/query
+           (get search-queries (:common/search-option db))
+           {:text (:common/search-text db)
+            :offset (* 10 (- page 1))}
+           [:common/recieve-search-result]]]]}))

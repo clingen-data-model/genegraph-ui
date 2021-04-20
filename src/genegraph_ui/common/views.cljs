@@ -62,6 +62,7 @@
       {:on-submit
        #(do (dispatch [:common/search
                        (.-value (.getElementById js/document "search"))])
+            (.preventDefault %)
             false)}
       [:input.input
        {:id "search"
@@ -89,13 +90,50 @@
 (defn disease-results []
   [:div])
 
+(defn pagination [current-page total-count]
+  (let [max-page (-> total-count (/ 10) Math/ceil)
+        page-seq (range 1 (+ 1 max-page))
+        displayed-pages #{1
+                          max-page
+                          current-page
+                          (- current-page 1)
+                          (+ current-page 1)}]
+    [:ul.pagination-list
+     (for [page (filter displayed-pages page-seq)]
+       (if (= current-page page)
+         ^{:key page}
+         [:li
+          {:on-click #(dispatch [:common/select-page page])}
+          [:a.pagination-link.is-current page]]
+         ^{:key page}
+         [:li
+          {:on-click #(dispatch [:common/select-page page])}
+          [:a.pagination-link page]]))]))
+
 (defn affiliation-results []
-  [:div
-   (for [affiliation @(subscribe [::common-subs/affiliation-list])]
-     ^{:key affiliation}
-     [:div
-      [:a.panel-block
-       (:label affiliation)]])])
+  (let [current-page @(subscribe [::common-subs/current-page])]
+    [:div
+     (for [affiliation @(subscribe [::common-subs/affiliation-list])]
+       ^{:key affiliation}
+       [:div
+        [:a.panel-block
+         (:label affiliation)]
+        (for [assertion (get-in affiliation
+                                [:gene_validity_assertions :curation_list])]
+          ^{:key assertion}
+          [:div.panel-block
+           {:title (get-in assertion [:disease :label])}
+           [:a.icon
+            {:href (rfe/href :gene-validity assertion)}
+            [:i.fas.fa-file]]
+           [:a {:href (rfe/href :gene (:gene assertion))}
+            (get-in assertion [:gene :label])]])
+        [:nav.panel-block.pagination.is-small
+         {:role "navigation"
+          :aria-label "pagination"}
+         (pagination current-page
+                     (get-in affiliation [:gene_validity_assertions
+                                          :count]))]])]))
 
 (defn panel-results []
   (case @(subscribe [::common-subs/current-search-option])
@@ -105,8 +143,7 @@
 
 (defn side-panel []
   [:nav.panel.box
-   [:p.panel-heading
-    "Genegraph"]
+   [:p.panel-heading "Genegraph"]
    (panel-tabs)
    (panel-search)
    (panel-results)])

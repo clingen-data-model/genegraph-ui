@@ -59,6 +59,8 @@
        [:div.box
         (details assertion)]
        [:div.box
+        [:p (:description assertion)]]
+       [:div.box
         (variant-level-evidence assertion)]]]]))
 
 (defn gene-link [gene]

@@ -6,6 +6,7 @@
   "query ($id: String) {
   gene_validity_assertion(iri: $id) {
     curie
+    description 
     report_date
     disease {
       curie

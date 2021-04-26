@@ -5,8 +5,11 @@
 (def gene-validity-query
   "query ($id: String) {
   gene_validity_assertion(iri: $id) {
+    subject {
+      curie
+    }
     curie
-    description 
+    description
     report_date
     disease {
       curie
@@ -29,18 +32,31 @@
       label
     }
     variant_evidence: evidence_lines(recursive: true, class: ProbandEvidenceLine) {
-       iri
-       score
-       description
-       type {
-          iri
-          curie
-          label
-       }
+      iri
+      score
+      description
+      type {
+        iri
+        curie
+        label
+      }
       evidence_items {
         label
       }
-     }
+    }
+    experimental_evidence: evidence_lines(recursive: true, class: ExperimentalEvidenceLine) {
+      iri
+      score
+      description
+      type {
+        iri
+        curie
+        label
+      }
+      evidence_items {
+        label
+      }
+    }
   }
 }")
 
@@ -105,3 +121,10 @@
            gene-validity-list-query
            {}
            [:gene-validity/recieve-assertion-list]]]]}))
+
+(re-frame/reg-event-db
+ :gene-validity/toggle-description
+ (fn [db _]
+   (assoc db
+          :gene-validity/show-description
+          (not (:gene-validity/show-description db)))))

@@ -141,9 +141,17 @@
     :disease (disease-results)
     :affiliation (affiliation-results)))
 
+(defn panel-breadcrumb []
+  [:nav.breadcrumb {:aria-label "breadcrumbs"}
+   [:ul
+    [:li [:a "search"]]
+    [:li [:a "results"]]
+    [:li [:a "Search Item"]]]])
+
 (defn side-panel []
   [:nav.panel.box
    [:p.panel-heading "Genegraph"]
    (panel-tabs)
+   ;; (panel-breadcrumb)
    (panel-search)
    (panel-results)])

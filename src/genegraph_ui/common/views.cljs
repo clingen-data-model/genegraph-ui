@@ -2,6 +2,7 @@
   (:require [genegraph-ui.common.events :as common-events]
             [genegraph-ui.common.subs :as common-subs]
             [re-frame.core :as re-frame :refer [subscribe dispatch]]
+            [clojure.string :as s]
             [reitit.frontend.easy :as rfe]))
 
 (defn signin-widget []
@@ -42,18 +43,18 @@
 
 (defn panel-tabs []
   (let [search-option @(subscribe [::common-subs/current-search-option])
-        options [:gene :disease :affiliation]]
+        options [:GENE :DISEASE :AFFILIATION]]
     [:p.panel-tabs
      (for [option options]
        (if (= search-option option)
          ^{:key option}
          [:a.is-active
           {:on-click #(dispatch [:common/select-search-option option])}
-          option]
+          (s/lower-case (name option))]
          ^{:key option}
          [:a
           {:on-click #(dispatch [:common/select-search-option option])}
-          option]))]))
+          (s/lower-case (name option))]))]))
 
 (defn panel-search []
   (let [search-option @(subscribe [::common-subs/current-search-option])]
@@ -67,7 +68,7 @@
       [:input.input
        {:id "search"
         :type :search
-        :placeholder search-option}]
+        :placeholder (s/lower-case (name search-option))}]
       [:span.icon.is-left
        [:i.fas.fa-search {:aria-hidden :true}]]]]))
 
@@ -136,22 +137,62 @@
                                           :count]))]])]))
 
 (defn panel-results []
-  (case @(subscribe [::common-subs/current-search-option])
-    :gene (gene-results)
-    :disease (disease-results)
-    :affiliation (affiliation-results)))
+  (let [result @(subscribe [::common-subs/search-result])]
+    [:div 
+     (for [i (:results result)]
+       ^{:key i}
+       [:a.panel-block
+        {:on-click #(dispatch [:common/select-value-object (:curie i)])}
+        (:label i)])]))
 
-(defn panel-breadcrumb []
-  [:nav.breadcrumb {:aria-label "breadcrumbs"}
+
+(defn panel-breadcrumb [object]
+  [:nav.breadcrumb.panel-block {:aria-label "breadcrumbs"}
    [:ul
-    [:li [:a "search"]]
-    [:li [:a "results"]]
-    [:li [:a "Search Item"]]]])
+    [:li [:a.icon
+          {:on-click #(dispatch [:common/clear-value-object])}
+          [:i.fas.fa-search]]]
+    (when object
+      [:li [:a (:label object)]])]])
 
-(defn side-panel []
-  [:nav.panel.box
-   [:p.panel-heading "Genegraph"]
+(defn search []
+  [:div
    (panel-tabs)
-   ;; (panel-breadcrumb)
    (panel-search)
    (panel-results)])
+
+(defn gene-sidepanel [gene]
+  [:div
+   (for [assertion (:subject_of gene)]
+     ^{:key assertion}
+     [:div.panel-block
+      [:a
+       (get-in assertion [:object :label])]])])
+
+(defn affiliation-sidepanel [affiliation]
+  [:div
+   (for [contribution (:contributions affiliation)]
+     ^{:key contribution}
+     [:div.panel-block
+      {:title (get-in contribution
+                      [:artifact :subject :object :label])}
+      [:a.icon [:i.fas.fa-file]]
+      [:a
+       (get-in contribution
+               [:artifact :subject :subject :label])]])])
+
+(defn value-object [object]
+  (let [type @(subscribe [::common-subs/value-object-type])]
+    (cond
+      (type :so/Gene) (gene-sidepanel object)
+      (type :cg/Affiliation) (affiliation-sidepanel object)
+      :else [:div])))
+
+(defn side-panel []
+  (let [result @(subscribe [::common-subs/current-value-object])]
+    [:nav.panel
+     ;; [:box.panel-heading "Genegraph"]
+     (panel-breadcrumb result)
+     (if result
+       (value-object result)
+       (search))]))

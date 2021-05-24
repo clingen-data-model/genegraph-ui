@@ -130,6 +130,17 @@
   }
 }"})
 
+(def search-query
+  "query ($text: String, $type: Type) {
+  find(text: $text, type: $type) {
+    count
+    results {
+      curie
+      label
+    }
+  }
+}")
+
 (re-frame/reg-event-db
  :common/recieve-search-result
  (fn [db [_ {:keys [data errors]}]]
@@ -140,20 +151,108 @@
 (re-frame/reg-event-fx
  :common/search
  (fn [{:keys [db]} [_ search-text]]
-   (js/console.log "submitted search result " search-text)
+   (js/console.log "submitted search result "
+                   search-text
+                   " "
+                   (:common/search-option db))
    {:db (assoc db
                :common/page 1
                :common/search-text search-text)
     :fx [[:dispatch
           [::re-graph/query
-           (get search-queries (:common/search-option db))
-           {:text search-text}
+           search-query
+           {:text search-text :type (:common/search-option db :GENE)}
            [:common/recieve-search-result]]]]}))
 
 (re-frame/reg-event-db
  :common/select-search-option
  (fn [db [_ option]]
    (assoc db :common/search-option option)))
+
+(def resource-query
+"query ($iri: String) {
+  resource(iri: $iri) {
+    label
+    curie
+    type {
+      label
+      curie
+      iri
+    }
+    subject_of {
+      label
+      curie
+      subject {
+        curie
+        label
+      }
+      object {
+        curie
+        label
+      }
+      type {
+        curie
+        label
+      }
+    }
+    ... on Agent {
+      contributions {
+        date
+        artifact {
+          curie
+          ... on Assertion {
+            subject {
+              curie
+              label
+              ... on Assertion {
+                subject {
+                  curie
+                  label
+                }
+                object {
+                  curie
+                  label
+                }
+              }
+            }
+            object {
+              curie
+              label
+            }
+          }
+        }
+      }
+    }
+  }
+}")
+
+(re-frame/reg-event-db
+ :common/clear-value-object
+ (fn [db _]
+   (js/console.log "clear value object")
+   (dissoc db :value-object)))
+
+(re-frame/reg-event-db
+ :common/recieve-value-object
+ (fn [db [_ {:keys [data errors]}]]
+   (js/console.log "recieve value object")
+   (assoc db :value-object (:resource data)
+          :common/query-response data)))
+
+(re-frame/reg-event-fx
+ :common/select-value-object
+ (fn [{:keys [db]} [_ curie]]
+   (js/console.log "select value object")
+   (let [params {:iri curie}]
+     {:db (assoc
+           db
+           :common/last-query resource-query
+           :common/last-params (str params))
+      :fx [[:dispatch
+            [::re-graph/query
+             resource-query
+             params
+             [:common/recieve-value-object]]]]})))
 
 (re-frame/reg-event-fx
  :common/select-page

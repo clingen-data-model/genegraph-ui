@@ -72,6 +72,11 @@
    (:common/last-params db)))
 
 (re-frame/reg-sub
+ ::history
+ (fn [db]
+   (:history db)))
+
+(re-frame/reg-sub
  ::query-response
  (fn [db]
    (with-out-str (cljs.pprint/pprint (:common/query-response db)))))

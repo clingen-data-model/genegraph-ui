@@ -243,11 +243,16 @@
  :common/select-value-object
  (fn [{:keys [db]} [_ curie]]
    (js/console.log "select value object")
-   (let [params {:iri curie}]
+   (let [params {:iri curie}
+         history (if (:value-object db)
+                   (cons (:value-object db)
+                         (:history db))
+                   (:history db))]
      {:db (assoc
            db
            :common/last-query resource-query
-           :common/last-params (str params))
+           :common/last-params (str params)
+           :history history)
       :fx [[:dispatch
             [::re-graph/query
              resource-query

@@ -167,7 +167,19 @@
      ^{:key assertion}
      [:div.panel-block
       [:a
+       {:on-click #(dispatch [:common/select-value-object
+                              (get-in assertion [:object :curie])])}
        (get-in assertion [:object :label])]])])
+
+(defn disease-sidepanel [disease]
+  [:div
+   (for [assertion (:subject_of disease)]
+     ^{:key assertion}
+     [:div.panel-block
+      [:a
+       {:on-click #(dispatch [:common/select-value-object
+                              (get-in assertion [:subject :curie])])}
+       (get-in assertion [:subject :label])]])])
 
 (defn affiliation-sidepanel [affiliation]
   [:div
@@ -185,14 +197,24 @@
   (let [type @(subscribe [::common-subs/value-object-type])]
     (cond
       (type :so/Gene) (gene-sidepanel object)
+      (type :owl/Class) (disease-sidepanel object)
       (type :cg/Affiliation) (affiliation-sidepanel object)
       :else [:div])))
+
+(defn history []
+  (let [history @(subscribe [::common-subs/history])]
+    [:div
+     (when (first history)
+       [:div.panel-block
+        [:a
+         [:span.icon [:i.fas.fa-chevron-left]]
+         [:span (:label (first history))]]])]))
 
 (defn side-panel []
   (let [result @(subscribe [::common-subs/current-value-object])]
     [:nav.panel
-     ;; [:box.panel-heading "Genegraph"]
      (panel-breadcrumb result)
+     (history)
      (if result
        (value-object result)
        (search))]))

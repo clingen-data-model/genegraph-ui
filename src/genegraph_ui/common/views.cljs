@@ -167,6 +167,8 @@
      ^{:key assertion}
      [:div.panel-block
       [:a
+       [:span.icon [:i.fas.fa-file]]]
+      [:a
        {:on-click #(dispatch [:common/select-value-object
                               (get-in assertion [:object :curie])])}
        (get-in assertion [:object :label])]])])
@@ -176,6 +178,8 @@
    (for [assertion (:subject_of disease)]
      ^{:key assertion}
      [:div.panel-block
+      [:a
+       [:span.icon [:i.fas.fa-file]]]
       [:a
        {:on-click #(dispatch [:common/select-value-object
                               (get-in assertion [:subject :curie])])}
@@ -207,6 +211,7 @@
      (when (first history)
        [:div.panel-block
         [:a
+         {:on-click #(dispatch [:common/back])}
          [:span.icon [:i.fas.fa-chevron-left]]
          [:span (:label (first history))]]])]))
 

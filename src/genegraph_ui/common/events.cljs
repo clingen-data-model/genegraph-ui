@@ -269,3 +269,12 @@
            {:text (:common/search-text db)
             :offset (* 10 (- page 1))}
            [:common/recieve-search-result]]]]}))
+
+(re-frame/reg-event-db
+ :common/back
+ (fn [db _]
+   (assoc db
+          :value-object (first (:history db))
+          :history (assoc db
+                          :history
+                          (cons (:value-object db) (:history db))))))

@@ -4,11 +4,13 @@
             [reagent.core :as reagent]
             [reitit.core :as r]
             [reitit.coercion.spec :as rss]
+            [reitit.coercion.schema :as rsc]
+            [schema.core :as s]
             [reitit.frontend :as rf]
             [reitit.frontend.controllers :as rfc]
             [reitit.frontend.easy :as rfe]
+            [genegraph-ui.pages.resource.views :as resource]
             [genegraph-ui.pages.home.views :as home]
-            [genegraph-ui.pages.admin.views :as admin]
             [genegraph-ui.pages.gene.views :as gene]
             [genegraph-ui.pages.disease.views :as disease]
             [genegraph-ui.pages.gene-validity.views :as gene-validity]
@@ -52,64 +54,64 @@
        :start (fn [& params](js/console.log "Entering home page"))
        ;; Teardown can be done here.
        :stop  (fn [& params] (js/console.log "Leaving home page"))}]}]
-   ["admin"
-    {:name      :admin
-     :view      admin/admin
-     :link-text "admin"
-     :controllers
-     [{;; Do whatever initialization needed for home page
-       ;; I.e (re-frame/dispatch [::events/load-something-with-ajax])
-       :start (fn [& params]
-                (js/console.log "Entering admin page"))
-       ;; Teardown can be done here.
-       :stop  (fn [& params] (js/console.log "Leaving admin page"))}]}]
-   ["gene/:curie"
-    {:name      :gene
-     :view      gene/gene
-     :link-text "genes"
-     :controllers
-     [{;; Do whatever initialization needed for home page
-       ;; I.e (re-frame/dispatch [::events/load-something-with-ajax])
-       :parameters {:path [:curie]}
-       :start (fn [params]
-                (re-frame/dispatch
-                 [:gene/request-gene (get-in params [:path :curie])]))
-       ;; Teardown can be done here.
-       :stop  (fn [& params] (js/console.log "Leaving genes page"))}]}]
-   ["disease/:curie"
-    {:name      :disease
-     :view      disease/disease
-     :link-text "disease"
-     :controllers
-     [{;; Do whatever initialization needed for home page
-       ;; I.e (re-frame/dispatch [::events/load-something-with-ajax])
-       :parameters {:path [:curie]}
-       :start (fn [params]
-                (re-frame/dispatch
-                 [:disease/request-disease (get-in params [:path :curie])]))
-       ;; Teardown can be done here.
-       :stop  (fn [& params] (js/console.log "Leaving disease page"))}]}]
-   ["gene_validity"
-    {:name :gene-validity-list
-     :view gene-validity/gene-validity-assertions
-     :link-text "gene validity"
-     :controllers
-     [{ :start (fn [params]
-                 (js/console.log "entering gene validity list page")
-                 (re-frame/dispatch
-                  [:gene-validity/request-assertion-list]))
-       :stop  (fn [& params] (js/console.log "Leaving gene validity list page"))}]}]
-   ["gene_validity/:curie"
-    {:name      :gene-validity
-     :view      gene-validity/gene-validity-assertion
-     :link-text "gene validity"
+   ["resource/:curie"
+    {:name :resource
+     :view resource/resource
+     :link-text "resource"
      :controllers
      [{:parameters {:path [:curie]}
        :start (fn [params]
-                (js/console.log "entering gene validity page")
                 (re-frame/dispatch
-                 [:gene-validity/request-assertion (get-in params [:path :curie])]))
-       :stop  (fn [& params] (js/console.log "Leaving gene validity page"))}]}]   ])
+                 [:common/select-value-object (get-in params [:path :curie])]))
+       :stop  (fn [& params] (js/console.log "Leaving resource page"))}]}]
+;;    ["gene/:curie"
+;;     {:name      :gene
+;;      :view      gene/gene
+;;      :link-text "genes"
+;;      :controllers
+;;      [{;; Do whatever initialization needed for home page
+;;        ;; I.e (re-frame/dispatch [::events/load-something-with-ajax])
+;;        :parameters {:path [:curie]}
+;;        :start (fn [params]
+;;                 (re-frame/dispatch
+;;                  [:gene/request-gene (get-in params [:path :curie])]))
+;;        ;; Teardown can be done here.
+;;        :stop  (fn [& params] (js/console.log "Leaving genes page"))}]}]
+;;    ["disease/:curie"
+;;     {:name      :disease
+;;      :view      disease/disease
+;;      :link-text "disease"
+;;      :controllers
+;;      [{;; Do whatever initialization needed for home page
+;;        ;; I.e (re-frame/dispatch [::events/load-something-with-ajax])
+;;        :parameters {:path [:curie]}
+;;        :start (fn [params]
+;;                 (re-frame/dispatch
+;;                  [:disease/request-disease (get-in params [:path :curie])]))
+;;        ;; Teardown can be done here.
+;;        :stop  (fn [& params] (js/console.log "Leaving disease page"))}]}]
+;;    ["gene_validity"
+;;     {:name :gene-validity-list
+;;      :view gene-validity/gene-validity-assertions
+;;      :link-text "gene validity"
+;;      :controllers
+;;      [{ :start (fn [params]
+;;                  (js/console.log "entering gene validity list page")
+;;                  (re-frame/dispatch
+;;                   [:gene-validity/request-assertion-list]))
+;;        :stop  (fn [& params] (js/console.log "Leaving gene validity list page"))}]}]
+;;    ["gene_validity/:curie"
+;;     {:name      :gene-validity
+;;      :view      gene-validity/gene-validity-assertion
+;;      :link-text "gene validity"
+;;      :controllers
+;;      [{:parameters {:path [:curie]}
+;;        :start (fn [params]
+;;                 (js/console.log "entering gene validity page")
+;;                 (re-frame/dispatch
+;;                  [:gene-validity/request-assertion (get-in params [:path :curie])]))
+;;        :stop  (fn [& params] (js/console.log "Leaving gene validity page"))}]}]
+   ])
 
 (defn on-navigate [new-match]
   (when new-match

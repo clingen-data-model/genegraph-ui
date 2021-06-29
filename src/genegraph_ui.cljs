@@ -16,6 +16,12 @@
 (goog-define BACKEND_HTTP "http://localhost:8888/api")
 (goog-define FIREBASE_CONFIG_NAME "clingen-dev")
 
+;; (defn router-component []
+;;   (let [current-route @(subscribe [::current-route])]
+;;     [:div
+;;      (when current-route
+;;        [(-> current-route :data :view)])]))
+
 (defn ^:dev/after-load mount-root []
   (println "[main] reloaded lib:")
   (routes/init-routes!)

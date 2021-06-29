@@ -11,7 +11,6 @@
   }
 }")
 
-
 (re-frame/reg-event-fx
  :common/authenticate
  (fn [_ _]
@@ -31,8 +30,6 @@
     :db (assoc db
                :user-authorization nil
                :admin-user nil)}))
-
-
 
 (re-frame/reg-event-db
  :common/recieve-user-query
@@ -77,59 +74,6 @@
       :fx [[:common/retrieve-id-token]]}
      {:db (assoc (:db cofx) :user nil)})))
 
-(def search-queries
-  {:gene   "query($text: String) {
-  genes(text: $text) {
-    count
-    gene_list {
-      curie
-      label
-      curation_activities
-      gene_validity_assertions {
-        curie
-        disease {
-          curie
-          label
-        }
-      }
-    }
-  }
-}"
-   :affiliation
-   "query ($text: String, $offset: Int = 0) {
-  affiliations(text: $text)
-  {
-    agent_list {
-      curie
-      label
-      gene_validity_assertions(offset: $offset,
-        sort: {field: GENE_LABEL}) {
-        count
-        curation_list {
-          curie
-          gene {
-            label
-            curie
-          }
-          disease {
-            label
-            curie
-          }
-        }
-      }
-    }
-  }
-}"
-   :disease
-   "query ($text: String) {
-  diseases(text: $text) {
-    disease_list {
-      curie
-      label
-    }
-  }
-}"})
-
 (def search-query
   "query ($text: String, $type: Type) {
   find(text: $text, type: $type) {
@@ -169,80 +113,60 @@
  (fn [db [_ option]]
    (assoc db :common/search-option option)))
 
+
 (def resource-query
-"query ($iri: String) {
+  "query ($iri: String) {
   resource(iri: $iri) {
-    label
-    curie
-    type {
-      label
-      curie
-      iri
-    }
+    ...basicFields
     subject_of {
-      label
-      curie
-      subject {
-        curie
-        label
-      }
-      object {
-        curie
-        label
-      }
-      type {
-        curie
-        label
-      }
+      ...basicFields
+      ...statementFields
     }
-    ... on Agent {
-      contributions {
-        date
-        artifact {
-          curie
-          ... on Assertion {
-            subject {
-              curie
-              label
-              ... on Assertion {
-                subject {
-                  curie
-                  label
-                }
-                object {
-                  curie
-                  label
-                }
-              }
-            }
-            object {
-              curie
-              label
-            }
-          }
-        }
-      }
+    ... on Assertion {
+      ...statementFields
     }
   }
-}")
+}
 
-(re-frame/reg-event-db
- :common/clear-value-object
- (fn [db _]
-   (js/console.log "clear value object")
-   (dissoc db :value-object)))
+fragment basicFields on Resource {
+  __typename
+  label
+  curie
+  type {
+    __typename
+    label
+    curie
+  }
+}
+
+fragment statementFields on Assertion {
+  subject {
+    ...basicFields
+  }
+  predicate {
+    ...basicFields
+  }
+  object {
+    ...basicFields
+  }
+  evidence {
+    ...basicFields
+  }
+}")
 
 (re-frame/reg-event-db
  :common/recieve-value-object
  (fn [db [_ {:keys [data errors]}]]
    (js/console.log "recieve value object")
-   (assoc db :value-object (:resource data)
-          :common/query-response data)))
+   (cljs.pprint/pprint errors)
+   (-> db
+       (merge data)
+       (assoc :common/query-response data))))
 
 (re-frame/reg-event-fx
  :common/select-value-object
  (fn [{:keys [db]} [_ curie]]
-   (js/console.log "select value object")
+   (js/console.log "select value object " curie)
    (let [params {:iri curie}
          history (if (:value-object db)
                    (cons (:value-object db)
@@ -258,23 +182,3 @@
              resource-query
              params
              [:common/recieve-value-object]]]]})))
-
-(re-frame/reg-event-fx
- :common/select-page
- (fn [{:keys [db]} [_ page]]
-   {:db (assoc db :common/page page)
-    :fx [[:dispatch
-          [::re-graph/query
-           (get search-queries (:common/search-option db))
-           {:text (:common/search-text db)
-            :offset (* 10 (- page 1))}
-           [:common/recieve-search-result]]]]}))
-
-(re-frame/reg-event-db
- :common/back
- (fn [db _]
-   (assoc db
-          :value-object (first (:history db))
-          :history (assoc db
-                          :history
-                          (cons (:value-object db) (:history db))))))

@@ -10,11 +10,12 @@
    [:p.block (render-link (:subject statement))]
    [:p.block (render-link (:predicate statement))]
    [:p.block (render-link (:object statement))]
+   [:p.block "( " (map render-link (:type statement)) " )"]
    [:h5.title.is-5 "statements about"]
    [:div.block
     (for [referee (:subject_of statement)]
       (render-compact referee))]
-   [:h5.title.is-5 "evidence for"]
+   [:h5.title.is-5 "evidence"]
    [:div.block
     (for [evidence (:evidence statement)]
       (render-compact evidence))]])

@@ -12,5 +12,6 @@
      (render-compact assertion))])
 
 (defmethod render-compact "GenericResource" [resource]
+  ^{:key resource}
   [:p.block (render-link resource)])
 

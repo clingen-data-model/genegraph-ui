@@ -118,12 +118,25 @@
   "query ($iri: String) {
   resource(iri: $iri) {
     ...basicFields
+    ... on ProbandEvidence {
+      ...probandFields
+    }
     subject_of {
       ...basicFields
       ...statementFields
     }
-    ... on Assertion {
+    ... on Statement {
       ...statementFields
+    }
+  }
+}
+
+fragment probandFields on ProbandEvidence {
+  variants {
+    curie
+    label
+    canonical_reference {
+      curie
     }
   }
 }
@@ -132,6 +145,12 @@ fragment basicFields on Resource {
   __typename
   label
   curie
+  description
+  source {
+    curie
+    iri
+    label
+  }
   type {
     __typename
     label
@@ -139,7 +158,7 @@ fragment basicFields on Resource {
   }
 }
 
-fragment statementFields on Assertion {
+fragment statementFields on Statement {
   subject {
     ...basicFields
   }
@@ -151,7 +170,14 @@ fragment statementFields on Assertion {
   }
   evidence {
     ...basicFields
+    ... on Statement {
+      score
+    }
+    ... on ProbandEvidence {
+      ...probandFields
+    }
   }
+  score
 }")
 
 (re-frame/reg-event-db

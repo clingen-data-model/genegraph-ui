@@ -4,13 +4,26 @@
              [render-full render-compact render-link]]
             [reitit.frontend.easy :refer [href]]))
 
-(defmethod render-full "Assertion" [statement]
+(defmethod render-full "Statement" [statement]
   [:section.section
-   [:h5.title.is-5 "definition"]
+   [:div.box
+    [:h5.title.is-5
+     (:curie statement)]
+    [:h6.subtitle.is-6
+     [:div.level
+      [:div.level-left
+       (for [t (:type statement)]
+         ^{:key t}
+         [:level-item
+          (render-link t)])]]]
+    ;;(map render-link (:type statement))
+    ]
+
    [:p.block (render-link (:subject statement))]
    [:p.block (render-link (:predicate statement))]
    [:p.block (render-link (:object statement))]
-   [:p.block "( " (map render-link (:type statement)) " )"]
+   (when (:score statement)
+     [:h5.title.is-5 "score: " (:score statement)])
    [:h5.title.is-5 "statements about"]
    [:div.block
     (for [referee (:subject_of statement)]
@@ -20,18 +33,21 @@
     (for [evidence (:evidence statement)]
       (render-compact evidence))]])
 
-(defmethod render-compact "Assertion" [assertion]
-  ^{:key assertion}
+(defmethod render-compact "Statement" [statement]
+  ^{:key statement}
   [:div.columns
    [:div.column.is-narrow
     [:a.icon
-     {:href (href :resource assertion)}
+     {:href (href :resource statement)}
      [:i.fas.fa-file]]]
    [:div.column.is-narrow
-    (map render-link (:type assertion))]
+    [:h6.title.is-6 "score:"]
+    (:score statement)]
    [:div.column.is-narrow
-    (render-link (:subject assertion))]
+    (map render-link (:type statement))]
    [:div.column.is-narrow
-    (render-link (:object assertion))]])
+    (render-link (:subject statement))]
+   [:div.column.is-narrow
+    (render-link (:object statement))]])
 
 

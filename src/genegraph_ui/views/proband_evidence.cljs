@@ -8,7 +8,11 @@
   [:section.section
    [:div.box.block
     [:h5.title.is-5
-     (:curie evidence)]
+     [:div.level 
+      [:div.level-right
+       [:div.level-item (:curie evidence)]]
+      [:div.level-left
+       [:div.level-item (render-link (:source evidence))]]]]
     [:h6.subtitle.is-6
      (map render-link (:type evidence))]]
    [:div.box.block

@@ -147,9 +147,11 @@ fragment basicFields on Resource {
   curie
   description
   source {
+    __typename
     curie
     iri
     label
+    short_citation
   }
   type {
     __typename
@@ -178,7 +180,9 @@ fragment statementFields on Statement {
     }
   }
   score
-}")
+}
+
+")
 
 (re-frame/reg-event-db
  :common/recieve-value-object

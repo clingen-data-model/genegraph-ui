@@ -115,6 +115,7 @@
 
 
 (def resource-query
+
   "query ($iri: String) {
   resource(iri: $iri) {
     ...basicFields
@@ -127,6 +128,11 @@
     }
     ... on Statement {
       ...statementFields
+    }
+    __typename
+    used_as_evidence_by {
+      ...statementFields
+      ...basicFields
     }
   }
 }
@@ -170,7 +176,10 @@ fragment statementFields on Statement {
   object {
     ...basicFields
   }
-  evidence {
+  qualifier {
+    ...basicFields
+  }
+  direct_evidence: evidence {
     ...basicFields
     ... on Statement {
       score
@@ -179,10 +188,23 @@ fragment statementFields on Statement {
       ...probandFields
     }
   }
+  genetic_evidence: evidence(transitive: true, class: \"SEPIO:0004083\") {
+    ...basicFields
+        ... on Statement {
+      score
+    }
+    ... on ProbandEvidence {
+      ...probandFields
+    }
+  }
+  experimental_evidence: evidence(transitive: true, class: \"SEPIO:0004105\") {
+    ...basicFields
+    ... on Statement {
+      score
+    }
+  }
   score
-}
-
-")
+}")
 
 (re-frame/reg-event-db
  :common/recieve-value-object

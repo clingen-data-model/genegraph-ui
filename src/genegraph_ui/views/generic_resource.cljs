@@ -16,9 +16,12 @@
          [:div.level-item
           (render-link t)])]]]
    [:p.block (:description resource)]
-   [:h5.title.is-5 "Statements"]
-   (for [assertion (:subject_of resource)]
-     (render-compact assertion))])
+   (for [statements-by-type-map-entry (group-by #(-> % :type first) (:subject_of resource))]
+     ^{:key (key statements-by-type-map-entry)}
+     [:div
+      [:h6.title.is-6 (render-link (key statements-by-type-map-entry))]
+      (for [statement (val statements-by-type-map-entry)]
+        (render-compact statement {:skip [:type] :source (:curie resource)}))])])
 
 (defmethod render-compact "GenericResource" [resource]
   ^{:key resource}

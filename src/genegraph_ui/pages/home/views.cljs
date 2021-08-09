@@ -6,11 +6,22 @@
             [genegraph-ui.pages.home.events]
             [reitit.frontend.easy :as rfe]))
 
+(defn query []
+  (let [query @(subscribe [::common-subs/current-query])
+        params @(subscribe [::common-subs/current-params])
+        response @(subscribe [::common-subs/query-response])]
+    [:div
+     [:pre query]
+     [:pre params]
+     [:pre response]]))
+
 
 (defn home []
   [:section.section
    [:div.columns
     [:div.column.is-one-third
-     (common-views/side-panel)]]])
+     (common-views/side-panel)]
+    [:div.column.is-two-thirds
+     (query)]]])
 
 

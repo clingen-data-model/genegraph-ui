@@ -1,5 +1,6 @@
 (ns genegraph-ui.common.subs
-  (:require [re-frame.core :as re-frame]))
+  (:require [re-frame.core :as re-frame]
+            [genegraph-ui.common.names :as names]))
 
 (re-frame/reg-sub
  ::user
@@ -37,6 +38,45 @@
    (:common/search-option db)))
 
 (re-frame/reg-sub
+ ::search-result
+ (fn [db]
+   (:find db)))
+
+(re-frame/reg-sub
  ::current-page
  (fn [db]
    (or (:common/page db) 1)))
+
+(re-frame/reg-sub
+ ::current-value-object
+ (fn [db]
+   (:value-object db)))
+
+(re-frame/reg-sub
+ ::value-object-type
+ (fn [db]
+   (let [types (get-in db [:value-object :type])]
+     (->> types
+          (map :iri)
+          (map names/iri->kw)
+          set))))
+
+(re-frame/reg-sub
+ ::current-query
+ (fn [db]
+   (:common/last-query db)))
+
+(re-frame/reg-sub
+ ::current-params
+ (fn [db]
+   (:common/last-params db)))
+
+(re-frame/reg-sub
+ ::history
+ (fn [db]
+   (:history db)))
+
+(re-frame/reg-sub
+ ::query-response
+ (fn [db]
+   (with-out-str (cljs.pprint/pprint (:common/query-response db)))))

@@ -11,7 +11,6 @@
   }
 }")
 
-
 (re-frame/reg-event-fx
  :common/authenticate
  (fn [_ _]
@@ -31,8 +30,6 @@
     :db (assoc db
                :user-authorization nil
                :admin-user nil)}))
-
-
 
 (re-frame/reg-event-db
  :common/recieve-user-query
@@ -77,58 +74,16 @@
       :fx [[:common/retrieve-id-token]]}
      {:db (assoc (:db cofx) :user nil)})))
 
-(def search-queries
-  {:gene   "query($text: String) {
-  genes(text: $text) {
+(def search-query
+  "query ($text: String, $type: Type) {
+  find(text: $text, type: $type) {
     count
-    gene_list {
-      curie
-      label
-      curation_activities
-      gene_validity_assertions {
-        curie
-        disease {
-          curie
-          label
-        }
-      }
-    }
-  }
-}"
-   :affiliation
-   "query ($text: String, $offset: Int = 0) {
-  affiliations(text: $text)
-  {
-    agent_list {
-      curie
-      label
-      gene_validity_assertions(offset: $offset,
-        sort: {field: GENE_LABEL}) {
-        count
-        curation_list {
-          curie
-          gene {
-            label
-            curie
-          }
-          disease {
-            label
-            curie
-          }
-        }
-      }
-    }
-  }
-}"
-   :disease
-   "query ($text: String) {
-  diseases(text: $text) {
-    disease_list {
+    results {
       curie
       label
     }
   }
-}"})
+}")
 
 (re-frame/reg-event-db
  :common/recieve-search-result
@@ -140,14 +95,17 @@
 (re-frame/reg-event-fx
  :common/search
  (fn [{:keys [db]} [_ search-text]]
-   (js/console.log "submitted search result " search-text)
+   (js/console.log "submitted search result "
+                   search-text
+                   " "
+                   (:common/search-option db))
    {:db (assoc db
                :common/page 1
                :common/search-text search-text)
     :fx [[:dispatch
           [::re-graph/query
-           (get search-queries (:common/search-option db))
-           {:text search-text}
+           search-query
+           {:text search-text :type (:common/search-option db :GENE)}
            [:common/recieve-search-result]]]]}))
 
 (re-frame/reg-event-db
@@ -155,13 +113,124 @@
  (fn [db [_ option]]
    (assoc db :common/search-option option)))
 
+
+(def resource-query
+
+  "query ($iri: String) {
+  resource(iri: $iri) {
+    ...basicFields
+    ... on ProbandEvidence {
+      ...probandFields
+    }
+    subject_of {
+      ...basicFields
+      ...statementFields
+    }
+    ... on Statement {
+      ...statementFields
+    }
+    __typename
+    used_as_evidence_by {
+      ...statementFields
+      ...basicFields
+    }
+  }
+}
+
+fragment probandFields on ProbandEvidence {
+  variants {
+    curie
+    label
+    canonical_reference {
+      curie
+    }
+  }
+}
+
+fragment basicFields on Resource {
+  __typename
+  label
+  curie
+  description
+  source {
+    __typename
+    curie
+    iri
+    label
+    short_citation
+  }
+  type {
+    __typename
+    label
+    curie
+  }
+}
+
+fragment statementFields on Statement {
+  subject {
+    ...basicFields
+  }
+  predicate {
+    ...basicFields
+  }
+  object {
+    ...basicFields
+  }
+  qualifier {
+    ...basicFields
+  }
+  direct_evidence: evidence {
+    ...basicFields
+    ... on Statement {
+      score
+    }
+    ... on ProbandEvidence {
+      ...probandFields
+    }
+  }
+  genetic_evidence: evidence(transitive: true, class: \"SEPIO:0004083\") {
+    ...basicFields
+        ... on Statement {
+      score
+    }
+    ... on ProbandEvidence {
+      ...probandFields
+    }
+  }
+  experimental_evidence: evidence(transitive: true, class: \"SEPIO:0004105\") {
+    ...basicFields
+    ... on Statement {
+      score
+    }
+  }
+  score
+}")
+
+(re-frame/reg-event-db
+ :common/recieve-value-object
+ (fn [db [_ {:keys [data errors]}]]
+   (js/console.log "recieve value object")
+   (cljs.pprint/pprint errors)
+   (-> db
+       (merge data)
+       (assoc :common/query-response data))))
+
 (re-frame/reg-event-fx
- :common/select-page
- (fn [{:keys [db]} [_ page]]
-   {:db (assoc db :common/page page)
-    :fx [[:dispatch
-          [::re-graph/query
-           (get search-queries (:common/search-option db))
-           {:text (:common/search-text db)
-            :offset (* 10 (- page 1))}
-           [:common/recieve-search-result]]]]}))
+ :common/select-value-object
+ (fn [{:keys [db]} [_ curie]]
+   (js/console.log "select value object " curie)
+   (let [params {:iri curie}
+         history (if (:value-object db)
+                   (cons (:value-object db)
+                         (:history db))
+                   (:history db))]
+     {:db (assoc
+           db
+           :common/last-query resource-query
+           :common/last-params (str params)
+           :history history)
+      :fx [[:dispatch
+            [::re-graph/query
+             resource-query
+             params
+             [:common/recieve-value-object]]]]})))

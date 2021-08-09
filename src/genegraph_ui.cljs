@@ -16,6 +16,12 @@
 (goog-define BACKEND_HTTP "http://localhost:8888/api")
 (goog-define FIREBASE_CONFIG_NAME "clingen-dev")
 
+;; (defn router-component []
+;;   (let [current-route @(subscribe [::current-route])]
+;;     [:div
+;;      (when current-route
+;;        [(-> current-route :data :view)])]))
+
 (defn ^:dev/after-load mount-root []
   (println "[main] reloaded lib:")
   (routes/init-routes!)
@@ -25,9 +31,8 @@
 (re-frame/reg-event-db
   ::initialize-db
   (fn [db _]
-    {:current-route nil
-     :home/search-topic :gene
-     :common/search-option :gene}))
+    {:common/search-option :GENE
+     :current-route nil}))
 
 (defn ^:export init []
   (re-frame/dispatch-sync [::initialize-db])

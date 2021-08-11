@@ -25,5 +25,14 @@
 
 (defmethod render-compact "GenericResource" [resource]
   ^{:key resource}
-  [:p.block (render-link resource)])
+  [:div.columns.is-multiline
+   [:div.column.is-one-third
+    [:div.break (render-link resource)]
+    (when-let [source (:source resource)]
+      [:div.break [:a.is-size-7
+                   {:href (:iri source)
+                    :title (:label source)}
+                   (:short_citation source)]])]
+   (when-let [description (:description resource)]
+     [:div.column description])])
 

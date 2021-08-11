@@ -115,8 +115,7 @@
 
 
 (def resource-query
-
-  "query ($iri: String) {
+"query ($iri: String, $genetic_evidence_type: String, $experimental_evidence_type: String) {
   resource(iri: $iri) {
     ...basicFields
     ... on ProbandEvidence {
@@ -188,19 +187,31 @@ fragment statementFields on Statement {
       ...probandFields
     }
   }
-  genetic_evidence: evidence(transitive: true, class: \"SEPIO:0004083\") {
+  genetic_evidence: evidence(transitive: true, class: $genetic_evidence_type) {
     ...basicFields
-        ... on Statement {
+    ... on Statement {
       score
+      evidence {
+        ... basicFields
+        ... on ProbandEvidence {
+          ... probandFields
+        }
+      }
     }
     ... on ProbandEvidence {
       ...probandFields
     }
   }
-  experimental_evidence: evidence(transitive: true, class: \"SEPIO:0004105\") {
+  experimental_evidence: evidence(transitive: true, class: $experimental_evidence_type) {
     ...basicFields
     ... on Statement {
       score
+      evidence {
+        ... basicFields
+        ... on ProbandEvidence {
+          ... probandFields
+        }
+      }
     }
   }
   score
@@ -219,7 +230,9 @@ fragment statementFields on Statement {
  :common/select-value-object
  (fn [{:keys [db]} [_ curie]]
    (js/console.log "select value object " curie)
-   (let [params {:iri curie}
+   (let [params {:iri curie
+                 :genetic_evidence_type "SEPIO:0004083"
+                 :experimental_evidence_type "SEPIO:0004105"}
          history (if (:value-object db)
                    (cons (:value-object db)
                          (:history db))

@@ -23,11 +23,14 @@
 (defmethod render-compact "ProbandEvidence" [evidence]
   ^{:key evidence}
   [:div.columns
-   [:div.column.is-narrow
-    [:a.icon
-     {:href (href :resource evidence)}
-     [:i.fas.fa-file]]]
-   [:div.column.is-narrow (render-link evidence)]
-   (for [variant (:variants evidence)]
-     ^{:key variant}
-     [:div.column.is-narrow (:label variant)])]) 
+   [:div.column.is-one-third (render-link evidence)
+    (when-let [source (:source evidence)]
+      [:div.break [:a.is-size-7
+                   {:href (:iri source)
+                    :title (:label source)}
+                   (:short_citation source)]])]
+   [:div.column
+    (for [variant (:variants evidence)]
+      ^{:key variant}
+      [:div.break (:label variant)])
+    [:div.break (:description evidence)]]]) 

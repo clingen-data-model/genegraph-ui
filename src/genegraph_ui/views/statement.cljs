@@ -4,6 +4,16 @@
              [render-full render-compact render-link]]
             [reitit.frontend.easy :refer [href]]))
 
+(defn render-compact-grouped-by-type [resources]
+  (for [[type resources-with-type] (group-by #(-> % :type first) resources)]
+    ^{:key type}
+    [:div.box
+     [:h6.title.is-6 (render-link type)]
+     (for [resource resources-with-type]
+       ^{:key resource}
+       [:div.box
+        (render-compact resource {:skip [:type]})])]))
+
 (defmethod render-full "Statement" [statement]
   [:section.section
    [:div.box
@@ -35,8 +45,7 @@
      [:h5.title.is-5 "score: " (:score statement)])
    [:h5.title.is-5 "statements about"]
    [:div.block
-    (for [referee (:subject_of statement)]
-      (render-compact referee))]
+    (render-compact-grouped-by-type (:subject_of statement))]
    [:h5.title.is-5 "used as evidence by"]
    [:h5.title.is-5 "direct evidence"]
    [:div.block
@@ -44,12 +53,10 @@
       (render-compact evidence))]
    [:h5.title.is-5 "genetic evidence"]
    [:div.block
-    (for [evidence (:genetic_evidence statement)]
-      (render-compact evidence))]
+    (render-compact-grouped-by-type (:genetic_evidence statement))]
    [:h5.title.is-5 "experimental evidence"]
    [:div.block
-    (for [evidence (:experimental_evidence statement)]
-      (render-compact evidence))]])
+    (render-compact-grouped-by-type (:experimental_evidence statement))]])
 
 (defmethod render-compact "Statement"
   ([statement]
@@ -57,22 +64,36 @@
   ([statement options]
    ^{:key statement}
    [:div.columns
-    [:div.column.is-narrow
-     [:a.icon
-      {:href (href :resource statement)}
-      [:i.fas.fa-file]]]
-    (when (:score statement)
-      [:div.column.is-narrow
-       [:h6.title.is-6 "score:"]
-       (:score statement)])
-    (when-not (some #(= :type %) (:skip options))
-      [:div.column.is-narrow
-       (map render-link (:type statement))])
-    (when-not (= (:source options) (get-in statement [:subject :curie]))
-      [:div.column.is-narrow
-       (render-link (:subject statement))])
-    (when-not (= (:source options) (get-in statement [:object :curie]))
-      [:div.column.is-narrow
-       (render-link (:object statement))])]))
+    [:div.column
+     [:div.columns
+      [:div.column.is-one-third
+       (cond
+         (:score statement) [:a.break.has-text-weight-semibold
+                             {:href (href :resource statement)}
+                             "score: " (:score statement)]
+         :else [:a.break.icon
+                {:href (href :resource statement)}
+                [:i.fas.fa-file]])
+       (when-not (some #(= :type %) (:skip options))
+         [:div.break
+          (map render-link (:type statement))])
+       (when-not (= (:source options) (get-in statement [:subject :curie]))
+         [:div.break
+          (render-link (:subject statement))])
+       [:div.break
+        (render-link (:predicate statement))]
+       (when-not (= (:source options) (get-in statement [:object :curie]))
+         [:div.break
+          (render-link (:object statement))])]
+      (when-let [description (:description statement)]
+        (let [description-segments (re-seq #"(?:\S+\s+\n?){1,50}" description)]
+          [:div.column
+           (first description-segments)
+           (when (< 1 (count description-segments))
+             "...")]))]
+     (for [evidence (:evidence statement)]
+       ^{:key evidence}
+       [:div.columns
+        [:div.column (render-compact evidence)]])]]))
 
 

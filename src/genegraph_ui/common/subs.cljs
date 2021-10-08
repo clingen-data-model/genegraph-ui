@@ -69,7 +69,7 @@
 (re-frame/reg-sub
  ::current-params
  (fn [db]
-   (:common/last-params db)))
+   (.stringify js/JSON (clj->js    (:common/last-params db)) nil 2)))
 
 (re-frame/reg-sub
  ::history
@@ -79,4 +79,7 @@
 (re-frame/reg-sub
  ::query-response
  (fn [db]
-   (with-out-str (cljs.pprint/pprint (:common/query-response db)))))
+   (.stringify js/JSON (clj->js (:common/query-response db)) nil 2)
+   ;; (with-out-str (cljs.pprint/pprint
+   ;;                (:common/query-response db)))
+   ))

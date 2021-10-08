@@ -34,7 +34,6 @@
 (re-frame/reg-event-db
  :common/recieve-user-query
  (fn [db [_ {:keys [data errors]}]]
-   ;; (cljs.pprint/pprint errors)
    (if (:current_user data)
      (assoc db
             :user-authorization :authorized
@@ -89,7 +88,6 @@
  :common/recieve-search-result
  (fn [db [_ {:keys [data errors]}]]
    (js/console.log "recieved search result")
-   (cljs.pprint/pprint data)
    (merge db data)))
 
 (re-frame/reg-event-fx
@@ -221,7 +219,6 @@ fragment statementFields on Statement {
  :common/recieve-value-object
  (fn [db [_ {:keys [data errors]}]]
    (js/console.log "recieve value object")
-   (cljs.pprint/pprint errors)
    (-> db
        (merge data)
        (assoc :common/query-response data))))

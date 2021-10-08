@@ -18,9 +18,15 @@
           :app-dev {:output-dir "public/js"
                     :target :browser
                     :release {:closure-defines {genegraph-ui.FIREBASE_CONFIG_NAME "clingen-dev"
-                                                genegraph-ui.BACKEND_WS "wss://genegraph-gvdev.clingen.app/ws"
-                                                genegraph-ui.BACKEND_HTTP "https://genegraph-gvdev.clingen.app/api"}}
+                                                genegraph-ui.BACKEND_WS "wss://genegraph-testing.clingen.app/ws"
+                                                genegraph-ui.BACKEND_HTTP "https://genegraph-testing.clingen.app/api"}}
                     :modules {:genegraph-ui {:init-fn genegraph-ui/init}}}
+          :app-ggdev {:output-dir "public/js"
+                      :target :browser
+                      :release {:closure-defines {genegraph-ui.FIREBASE_CONFIG_NAME "clingen-dev"
+                                                  genegraph-ui.BACKEND_WS "wss://genegraph-gvdev.clingen.app/ws"
+                                                  genegraph-ui.BACKEND_HTTP "https://genegraph-gvdev.clingen.app/api"}}
+                      :modules {:genegraph-ui {:init-fn genegraph-ui/init}}}
           :app-stage {:output-dir "public/js"
                       :target :browser
                       :release {:closure-defines {genegraph-ui.FIREBASE_CONFIG_NAME "clingen-stage"

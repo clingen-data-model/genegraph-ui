@@ -1,6 +1,6 @@
 {
     "hosting": {
-	"site": "gg-dev",
+	"site": "gg-genevalidity-dev",
 	"public": "public",
 	"ignore": [
 	    "firebase.json",

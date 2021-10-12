@@ -84,9 +84,13 @@
         (render-link (:predicate statement))]
        (when-not (= (:source options) (get-in statement [:object :curie]))
          [:div.break
-          (render-link (:object statement))])]
+          (render-link (:object statement))])
+       (for [qualifier (:qualifier statement)]
+         ^{:key qualifier}
+         [:div.break
+          (render-link qualifier)])]
       (when-let [description (:description statement)]
-        (let [description-segments (re-seq #"(?:\S+\s+\n?){1,50}" description)]
+        (let [description-segments (re-seq #"(?:\S+\W+\n?){1,50}" description)]
           [:div.column
            (first description-segments)
            (when (< 1 (count description-segments))

@@ -2,7 +2,6 @@
   (:require [genegraph-ui.protocols :refer [render-full]]
             [genegraph-ui.views.generic-resource]
             [genegraph-ui.views.statement]
-            [genegraph-ui.views.evidence-line]
             [genegraph-ui.views.proband-evidence]
             [genegraph-ui.views.bibliographic-resource]
             [genegraph-ui.common.events :as common-events]

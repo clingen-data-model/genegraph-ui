@@ -3,6 +3,11 @@
             [genegraph-ui.common.names :as names]))
 
 (re-frame/reg-sub
+ ::show-query
+ (fn [db]
+   (:common/show-query db)))
+
+(re-frame/reg-sub
  ::user
  (fn [db]
    (:user db)))

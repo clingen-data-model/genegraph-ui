@@ -15,11 +15,20 @@
 (defn query []
   (let [query @(subscribe [::common-subs/current-query])
         params @(subscribe [::common-subs/current-params])
-        response @(subscribe [::common-subs/query-response])]
+        response @(subscribe [::common-subs/query-response])
+        show-query @(subscribe [::common-subs/show-query])]
     [:div
-     [:pre query]
-     [:pre params]
-     [:pre response]]))
+     [:button.button
+      {:on-click #(dispatch [:common/toggle-show-query])}
+      (if show-query "hide query" "show query")]
+     (when show-query
+       [:div.box
+        [:h6.title.is-6 "query"]
+        [:pre query]
+        [:h6.title.is-6 "parameters"]
+        [:pre params]
+        [:h6.title.is-6 "response"]
+        [:pre response]])]))
 
 (defn resource []
   (let [resource @(subscribe [::subs/resource])]
@@ -29,5 +38,4 @@
        (common-views/side-panel)]
       [:div.column.is-two-thirds
        (render-full resource)
-       (query)
-       ]]]))
+       (query)]]]))

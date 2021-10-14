@@ -215,13 +215,26 @@ fragment statementFields on Statement {
   score
 }")
 
-(re-frame/reg-event-db
+(re-frame/reg-fx
+ :common/scroll-to-top
+ (fn [_]
+   (js/console.log "scroll-to-top")
+   (set! (.. (first (.getElementsByTagName js/document "html")) -scrollTop) 0)))
+
+(re-frame/reg-event-fx
  :common/recieve-value-object
- (fn [db [_ {:keys [data errors]}]]
+ (fn [{:keys [db]} [_ {:keys [data errors]}]]
    (js/console.log "recieve value object")
-   (-> db
-       (merge data)
-       (assoc :common/query-response data))))
+   {:db (-> db
+            (merge data)
+            (assoc :common/query-response data))
+    :fx [[:common/scroll-to-top]]}))
+
+(re-frame/reg-event-db
+ :common/toggle-show-query
+ (fn [db [_]]
+   (js/console.log "toggle show query")
+   (assoc db :common/show-query (not (:common/show-query db)))))
 
 (re-frame/reg-event-fx
  :common/select-value-object

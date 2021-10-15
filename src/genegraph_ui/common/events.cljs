@@ -227,7 +227,8 @@ fragment statementFields on Statement {
    (js/console.log "recieve value object")
    {:db (-> db
             (merge data)
-            (assoc :common/query-response data))
+            (assoc :common/query-response data
+                   :common/is-loading false))
     :fx [[:common/scroll-to-top]]}))
 
 (re-frame/reg-event-db
@@ -251,6 +252,7 @@ fragment statementFields on Statement {
            db
            :common/last-query resource-query
            :common/last-params (str params)
+           :common/is-loading true
            :history history)
       :fx [[:dispatch
             [::re-graph/query

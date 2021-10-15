@@ -88,3 +88,8 @@
    ;; (with-out-str (cljs.pprint/pprint
    ;;                (:common/query-response db)))
    ))
+
+(re-frame/reg-sub
+ ::is-loading
+ (fn [db]
+   (:common/is-loading db)))

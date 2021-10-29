@@ -39,6 +39,11 @@
       ^{:key qualifier}
       [:div.column.is-narrow
        (render-link qualifier)])]
+   (for [contribution (:contributions statement)]
+     [:div.columns
+      [:div.column (render-link (:attributed_to contribution))]
+      [:div.column (render-link (:realizes contribution))]
+      [:div.column (:date contribution)]])
    [:div.block
     (:description statement)]
    (when (:score statement)

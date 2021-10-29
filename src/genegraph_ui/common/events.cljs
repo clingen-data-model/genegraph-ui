@@ -125,6 +125,17 @@
     }
     ... on Statement {
       ...statementFields
+      contributions {
+        attributed_to {
+          curie
+          label
+        }
+        date
+        realizes {
+          curie
+          label
+        }
+      }
     }
     __typename
     used_as_evidence_by {

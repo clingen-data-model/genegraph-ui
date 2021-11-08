@@ -25,9 +25,7 @@
        (for [t (:type statement)]
          ^{:key t}
          [:level-item
-          (render-link t)])]]]
-    ;;(map render-link (:type statement))
-    ]
+          (render-link t)])]]]]
    [:div.columns.is-multiline
     [:div.column.is-narrow
      (render-link (:subject statement))]

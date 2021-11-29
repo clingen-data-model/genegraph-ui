@@ -113,11 +113,14 @@
 
 
 (def resource-query
-"query ($iri: String, $genetic_evidence_type: String, $experimental_evidence_type: String) {
+  "query ($iri: String, $genetic_evidence_type: String, $experimental_evidence_type: String) {
   resource(iri: $iri) {
     ...basicFields
     ... on ProbandEvidence {
       ...probandFields
+    }
+    ... on Segregation {
+      ...segregationFields
     }
     subject_of {
       ...basicFields
@@ -152,6 +155,22 @@ fragment probandFields on ProbandEvidence {
     canonical_reference {
       curie
     }
+  }
+}
+
+fragment segregationFields on Segregation {
+  conditions {
+    curie
+    label
+  }
+  estimated_lod_score
+  published_lod_score
+  meets_inclusion_criteria
+  phenotype_negative_allele_negative_count
+  phenotype_positive_allele_positive_count
+  sequencing_method {
+    curie
+    label
   }
 }
 
@@ -195,20 +214,29 @@ fragment statementFields on Statement {
     ... on ProbandEvidence {
       ...probandFields
     }
+    ... on Segregation {
+      ...segregationFields
+    }
   }
   genetic_evidence: evidence(transitive: true, class: $genetic_evidence_type) {
     ...basicFields
     ... on Statement {
       score
       evidence {
-        ... basicFields
+        ...basicFields
         ... on ProbandEvidence {
-          ... probandFields
+          ...probandFields
+        }
+        ... on Segregation {
+          ...segregationFields
         }
       }
     }
     ... on ProbandEvidence {
       ...probandFields
+    }
+    ... on Segregation {
+      ...segregationFields
     }
   }
   experimental_evidence: evidence(transitive: true, class: $experimental_evidence_type) {
@@ -216,15 +244,18 @@ fragment statementFields on Statement {
     ... on Statement {
       score
       evidence {
-        ... basicFields
+        ...basicFields
         ... on ProbandEvidence {
-          ... probandFields
+          ...probandFields
         }
       }
     }
   }
   score
-}")
+}
+
+"
+)
 
 (re-frame/reg-fx
  :common/scroll-to-top

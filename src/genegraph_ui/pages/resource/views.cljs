@@ -4,6 +4,7 @@
             [genegraph-ui.views.statement]
             [genegraph-ui.views.proband-evidence]
             [genegraph-ui.views.bibliographic-resource]
+            [genegraph-ui.views.segregation]
             [genegraph-ui.common.events :as common-events]
             [genegraph-ui.common.subs :as common-subs]
             [genegraph-ui.common.views :as common-views]
@@ -39,6 +40,7 @@
   (let [resource @(subscribe [::subs/resource])
         is-loading @(subscribe [::common-subs/is-loading])]
     [:section.section
+     (common-views/navbar)
      [:div.columns
       [:div.column.is-one-third
        (common-views/side-panel)]

@@ -1,0 +1,26 @@
+* Overview
+
+  We need to create a way to understand both the data model and the graphql schema that makes it accessible. This is going to involve a high-level overview of the SEPIO model and accessible ways to use it from GraphQL.
+
+I don't want to re-write an intro to GraphQL tutorial, let's leverage the existing documentation.
+
+The Genegraph-UI is intended to serve as the guide for developers using the system. Let's build the documentation into that system. This means we can also provide a reference to examples directly within the app.
+  
+* Braintree entry:
+  
+** Have never used GraphQL before: About GraphQL
+   Link to graphql.org -- external
+** Want an ideas-first look at our API: API Concepts
+   SEPIO documentation -- external
+   Overall structure of a gene validity curation
+** Want to jump in with concrete examples: Making API Calls
+   Walk though a concrete example of finding items using find, selecting a specific item using resource; querying additional fields, esp using fragments.
+** Learn by doing and want to try it out first: API Explorer
+   GraphiQL, of course
+   Exploring the data with GenegraphUI; links into GraphiQL
+** Need a changelog for the full API: GitHub Schema Repo
+   Changelog for Genegraph
+   
+* Assets to leverage
+
+  We have real data and a

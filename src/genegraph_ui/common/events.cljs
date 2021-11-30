@@ -34,7 +34,6 @@
 (re-frame/reg-event-db
  :common/recieve-user-query
  (fn [db [_ {:keys [data errors]}]]
-   ;; (cljs.pprint/pprint errors)
    (if (:current_user data)
      (assoc db
             :user-authorization :authorized
@@ -89,7 +88,6 @@
  :common/recieve-search-result
  (fn [db [_ {:keys [data errors]}]]
    (js/console.log "recieved search result")
-   (cljs.pprint/pprint data)
    (merge db data)))
 
 (re-frame/reg-event-fx
@@ -115,11 +113,14 @@
 
 
 (def resource-query
-"query ($iri: String, $genetic_evidence_type: String, $experimental_evidence_type: String) {
+  "query ($iri: String, $genetic_evidence_type: String, $experimental_evidence_type: String) {
   resource(iri: $iri) {
     ...basicFields
     ... on ProbandEvidence {
       ...probandFields
+    }
+    ... on Segregation {
+      ...segregationFields
     }
     subject_of {
       ...basicFields
@@ -127,6 +128,17 @@
     }
     ... on Statement {
       ...statementFields
+      contributions {
+        attributed_to {
+          curie
+          label
+        }
+        date
+        realizes {
+          curie
+          label
+        }
+      }
     }
     __typename
     used_as_evidence_by {
@@ -143,6 +155,22 @@ fragment probandFields on ProbandEvidence {
     canonical_reference {
       curie
     }
+  }
+}
+
+fragment segregationFields on Segregation {
+  conditions {
+    curie
+    label
+  }
+  estimated_lod_score
+  published_lod_score
+  meets_inclusion_criteria
+  phenotype_negative_allele_negative_count
+  phenotype_positive_allele_positive_count
+  sequencing_method {
+    curie
+    label
   }
 }
 
@@ -186,20 +214,29 @@ fragment statementFields on Statement {
     ... on ProbandEvidence {
       ...probandFields
     }
+    ... on Segregation {
+      ...segregationFields
+    }
   }
   genetic_evidence: evidence(transitive: true, class: $genetic_evidence_type) {
     ...basicFields
     ... on Statement {
       score
       evidence {
-        ... basicFields
+        ...basicFields
         ... on ProbandEvidence {
-          ... probandFields
+          ...probandFields
+        }
+        ... on Segregation {
+          ...segregationFields
         }
       }
     }
     ... on ProbandEvidence {
       ...probandFields
+    }
+    ... on Segregation {
+      ...segregationFields
     }
   }
   experimental_evidence: evidence(transitive: true, class: $experimental_evidence_type) {
@@ -207,24 +244,40 @@ fragment statementFields on Statement {
     ... on Statement {
       score
       evidence {
-        ... basicFields
+        ...basicFields
         ... on ProbandEvidence {
-          ... probandFields
+          ...probandFields
         }
       }
     }
   }
   score
-}")
+}
+
+"
+)
+
+(re-frame/reg-fx
+ :common/scroll-to-top
+ (fn [_]
+   (js/console.log "scroll-to-top")
+   (set! (.. (first (.getElementsByTagName js/document "html")) -scrollTop) 0)))
+
+(re-frame/reg-event-fx
+ :common/recieve-value-object
+ (fn [{:keys [db]} [_ {:keys [data errors]}]]
+   (js/console.log "recieve value object")
+   {:db (-> db
+            (merge data)
+            (assoc :common/query-response data
+                   :common/is-loading false))
+    :fx [[:common/scroll-to-top]]}))
 
 (re-frame/reg-event-db
- :common/recieve-value-object
- (fn [db [_ {:keys [data errors]}]]
-   (js/console.log "recieve value object")
-   (cljs.pprint/pprint errors)
-   (-> db
-       (merge data)
-       (assoc :common/query-response data))))
+ :common/toggle-show-query
+ (fn [db [_]]
+   (js/console.log "toggle show query")
+   (assoc db :common/show-query (not (:common/show-query db)))))
 
 (re-frame/reg-event-fx
  :common/select-value-object
@@ -241,6 +294,7 @@ fragment statementFields on Statement {
            db
            :common/last-query resource-query
            :common/last-params (str params)
+           :common/is-loading true
            :history history)
       :fx [[:dispatch
             [::re-graph/query

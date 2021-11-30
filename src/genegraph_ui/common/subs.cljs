@@ -3,6 +3,11 @@
             [genegraph-ui.common.names :as names]))
 
 (re-frame/reg-sub
+ ::show-query
+ (fn [db]
+   (:common/show-query db)))
+
+(re-frame/reg-sub
  ::user
  (fn [db]
    (:user db)))
@@ -69,7 +74,7 @@
 (re-frame/reg-sub
  ::current-params
  (fn [db]
-   (:common/last-params db)))
+   (.stringify js/JSON (clj->js    (:common/last-params db)) nil 2)))
 
 (re-frame/reg-sub
  ::history
@@ -79,4 +84,12 @@
 (re-frame/reg-sub
  ::query-response
  (fn [db]
-   (with-out-str (cljs.pprint/pprint (:common/query-response db)))))
+   (.stringify js/JSON (clj->js (:common/query-response db)) nil 2)
+   ;; (with-out-str (cljs.pprint/pprint
+   ;;                (:common/query-response db)))
+   ))
+
+(re-frame/reg-sub
+ ::is-loading
+ (fn [db]
+   (:common/is-loading db)))

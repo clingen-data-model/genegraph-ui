@@ -42,8 +42,11 @@
     (js/console.log "firebase initialized"))
   (.log js/console "backend-ws: " BACKEND_WS ", backend-http: " BACKEND_HTTP)
   (re-frame/dispatch [::re-graph/init
-                      {:ws {:url BACKEND_WS}
-                       :http {:url BACKEND_HTTP}}])
+                      {
+                       ;;:ws {:url BACKEND_WS}
+                       :ws nil
+                       :http {:url BACKEND_HTTP
+                              :impl {:headers {"Access-Control-Allow-Credentials" true}}}}])
 
   (-> (.auth firebase-app) (.onAuthStateChanged #(dispatch [:common/auth-state-change])))
   (mount-root))

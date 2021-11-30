@@ -25,9 +25,7 @@
        (for [t (:type statement)]
          ^{:key t}
          [:level-item
-          (render-link t)])]]]
-    ;;(map render-link (:type statement))
-    ]
+          (render-link t)])]]]]
    [:div.columns.is-multiline
     [:div.column.is-narrow
      (render-link (:subject statement))]
@@ -39,6 +37,11 @@
       ^{:key qualifier}
       [:div.column.is-narrow
        (render-link qualifier)])]
+   (for [contribution (:contributions statement)]
+     [:div.columns
+      [:div.column (render-link (:attributed_to contribution))]
+      [:div.column (render-link (:realizes contribution))]
+      [:div.column (:date contribution)]])
    [:div.block
     (:description statement)]
    (when (:score statement)
@@ -84,9 +87,13 @@
         (render-link (:predicate statement))]
        (when-not (= (:source options) (get-in statement [:object :curie]))
          [:div.break
-          (render-link (:object statement))])]
+          (render-link (:object statement))])
+       (for [qualifier (:qualifier statement)]
+         ^{:key qualifier}
+         [:div.break
+          (render-link qualifier)])]
       (when-let [description (:description statement)]
-        (let [description-segments (re-seq #"(?:\S+\s+\n?){1,50}" description)]
+        (let [description-segments (re-seq #"(?:\S+\W+\n?){1,50}" description)]
           [:div.column
            (first description-segments)
            (when (< 1 (count description-segments))

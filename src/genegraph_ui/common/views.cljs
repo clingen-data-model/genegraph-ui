@@ -24,21 +24,20 @@
           {:on-click #(dispatch [:common/authenticate])}
           [:strong "log in"]]]]])))
 
-
-;; (defn panel-tabs []
-;;   (let [search-option @(subscribe [::common-subs/current-search-option])
-;;         options [:GENE :DISEASE :AFFILIATION]]
-;;     [:p.panel-tabs
-;;      (for [option options]
-;;        (if (= search-option option)
-;;          ^{:key option}
-;;          [:a.is-active
-;;           {:on-click #(dispatch [:common/select-search-option option])}
-;;           (s/lower-case (name option))]
-;;          ^{:key option}
-;;          [:a
-;;           {:on-click #(dispatch [:common/select-search-option option])}
-;;           (s/lower-case (name option))]))]))
+(defn navbar []
+  [:nav.navbar {:role "navigation" :aria-label "main navigation"}
+   [:div.navbar-brand
+    [:a.navbar-item {:href "/"}
+     "genegraph"]
+    [:a.navbar-burger {:role "button"
+                       :aria-label "menu"
+                       :aria-expanded "false"}
+     [:span {:aria-hidden "true"}]
+     [:span {:aria-hidden "true"}]
+     [:span {:aria-hidden "true"}]]]
+   [:div.navbar-menu
+    [:a.navbar-item "documentation"]
+    [:a.navbar-item "data browser"]]])
 
 (defn panel-search []
   (let [search-option @(subscribe [::common-subs/current-search-option])]

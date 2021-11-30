@@ -18,6 +18,7 @@
 
 (defn home []
   [:section.section
+   (common-views/navbar)
    [:div.columns
     [:div.column.is-one-third
      (common-views/side-panel)]

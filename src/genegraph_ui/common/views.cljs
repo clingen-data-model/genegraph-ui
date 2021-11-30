@@ -25,19 +25,27 @@
           [:strong "log in"]]]]])))
 
 (defn navbar []
-  [:nav.navbar {:role "navigation" :aria-label "main navigation"}
-   [:div.navbar-brand
-    [:a.navbar-item {:href "/"}
-     "genegraph"]
-    [:a.navbar-burger {:role "button"
-                       :aria-label "menu"
-                       :aria-expanded "false"}
-     [:span {:aria-hidden "true"}]
-     [:span {:aria-hidden "true"}]
-     [:span {:aria-hidden "true"}]]]
-   [:div.navbar-menu
-    [:a.navbar-item "documentation"]
-    [:a.navbar-item "data browser"]]])
+  (let [navbar-burger-active (when @(subscribe [::common-subs/navbar-burger-active])
+                               "is-active")]
+    [:nav.navbar {:role "navigation" :aria-label "main navigation"}
+     [:div.navbar-brand
+      [:a.navbar-item {:href "/"}
+       "genegraph"]
+      [:a.navbar-burger {:role "button"
+                         :aria-label "menu"
+                         :aria-expanded "false"
+                         :class navbar-burger-active
+                         :on-click #(dispatch [:common/toggle-navbar-burger])}
+       [:span {:aria-hidden "true"}]
+       [:span {:aria-hidden "true"}]
+       [:span {:aria-hidden "true"}]]]
+     [:div.navbar-menu
+      {:class navbar-burger-active}
+      [:a.navbar-item "data"
+       ]
+      [:a.navbar-item
+       {:href (rfe/href :documentation)}
+       "documentation"]]]))
 
 (defn panel-search []
   (let [search-option @(subscribe [::common-subs/current-search-option])]

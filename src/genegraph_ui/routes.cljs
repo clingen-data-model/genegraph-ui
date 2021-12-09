@@ -59,6 +59,18 @@
     {:name :documentation
      :view documentation/home
      :link-text "documentation"}]
+   ["documentation/sepio-overview"
+    {:name :sepio-overview
+     :view documentation/sepio-overview
+     :link-text "SEPIO overview"}]
+   ["documentation/examples"
+    {:name :examples
+     :view documentation/examples
+     :link-text "examples"}]
+   ["documentation/gene-validity"
+    {:name :gene-validity
+     :view documentation/gene-validity
+     :link-text "gene validity"}]
    ["resource/:curie"
     {:name :resource
      :view resource/resource

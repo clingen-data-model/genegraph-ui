@@ -301,3 +301,9 @@ fragment statementFields on Statement {
              resource-query
              params
              [:common/recieve-value-object]]]]})))
+
+(re-frame/reg-event-db
+ :common/toggle-navbar-burger
+ (fn [db [_]]
+   (js/console.log "navbar toggled")
+   (update db :common/navbar-burger-active not)))

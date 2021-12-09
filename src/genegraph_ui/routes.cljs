@@ -12,6 +12,7 @@
             [genegraph-ui.pages.resource.views :as resource]
             [genegraph-ui.pages.home.views :as home]
             [genegraph-ui.pages.gene.views :as gene]
+            [genegraph-ui.pages.documentation.views :as documentation]
             [genegraph-ui.pages.disease.views :as disease]
             [genegraph-ui.pages.gene-validity.views :as gene-validity]
             [genegraph-ui.pages.gene.events :as gene-events]
@@ -54,6 +55,22 @@
        :start (fn [& params](js/console.log "Entering home page"))
        ;; Teardown can be done here.
        :stop  (fn [& params] (js/console.log "Leaving home page"))}]}]
+   ["documentation"
+    {:name :documentation
+     :view documentation/home
+     :link-text "documentation"}]
+   ["documentation/sepio-overview"
+    {:name :sepio-overview
+     :view documentation/sepio-overview
+     :link-text "SEPIO overview"}]
+   ["documentation/examples"
+    {:name :examples
+     :view documentation/examples
+     :link-text "examples"}]
+   ["documentation/gene-validity"
+    {:name :gene-validity
+     :view documentation/gene-validity
+     :link-text "gene validity"}]
    ["resource/:curie"
     {:name :resource
      :view resource/resource

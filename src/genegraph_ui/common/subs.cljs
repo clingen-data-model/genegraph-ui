@@ -3,6 +3,11 @@
             [genegraph-ui.common.names :as names]))
 
 (re-frame/reg-sub
+ ::navbar-burger-active
+ (fn [db]
+   (:common/navbar-burger-active db)))
+
+(re-frame/reg-sub
  ::show-query
  (fn [db]
    (:common/show-query db)))

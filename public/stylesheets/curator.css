@@ -9,3 +9,7 @@
 .g-navbar {
     opacity: 0.1 ;
 }
+
+pre {
+    white-space: pre-wrap;
+}

@@ -38,14 +38,20 @@
 
 (defn resource []
   (let [resource @(subscribe [::subs/resource])
-        is-loading @(subscribe [::common-subs/is-loading])]
+        is-loading @(subscribe [::common-subs/is-loading])
+        menu-hidden @(subscribe [::common-subs/menu-hidden])]
     [:section.section
      (common-views/navbar)
      [:div.columns
-      [:div.column.is-one-third
-       (common-views/side-panel)]
+      (if menu-hidden
+        [:div.column.is-narrow
+         [:span.icon.is-pulled-right
+          {:on-click #(dispatch [:common/toggle-menu])}
+          [:i.fas.fa-angle-double-right]]]
+        [:div.column.is-one-third
+         (common-views/side-panel)])
       (if is-loading
         (loader)
-        [:div.column.is-two-thirds
+        [:div.column
          (render-full resource)
          (query)])]]))

@@ -307,3 +307,10 @@ fragment statementFields on Statement {
  (fn [db [_]]
    (js/console.log "navbar toggled")
    (update db :common/navbar-burger-active not)))
+
+
+(re-frame/reg-event-db
+ :common/toggle-menu
+ (fn [db [_]]
+   (js/console.log "menu toggled")
+   (update db :common/menu-hidden not)))

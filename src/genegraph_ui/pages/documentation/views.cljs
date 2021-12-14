@@ -24,7 +24,7 @@
        [:li [:a {:href (rfe/href :gene-validity)}"gene validity"]]]
       [:p.menu-label "explore"]
       [:ul.menu-list
-       [:li [:a "Genegraph GraphiQL" [:span.icon [:i.fas.fa-link]]]]]])
+       [:li [:a {:href (s/replace genegraph-ui.BACKEND_HTTP "api" "ide")  } "Genegraph GraphiQL" [:span.icon [:i.fas.fa-link]]]]]])
 
 (defn home []
   [:section.section

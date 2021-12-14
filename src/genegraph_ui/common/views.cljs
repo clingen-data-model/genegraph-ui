@@ -76,4 +76,9 @@
   (let [result @(subscribe [::common-subs/current-value-object])]
     [:nav.panel
      (panel-search)
-     (panel-results)]))
+     (panel-results)
+     [:div.panel-block
+      {:on-click #(dispatch [:common/toggle-menu])}
+      "hide menu"
+      [:span.icon.is-pulled-right
+       [:i.fas.fa-angle-double-left]]]]))

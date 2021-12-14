@@ -98,3 +98,8 @@
  ::is-loading
  (fn [db]
    (:common/is-loading db)))
+
+(re-frame/reg-sub
+ ::menu-hidden
+ (fn [db]
+   (:common/menu-hidden db)))

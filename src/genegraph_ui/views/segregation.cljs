@@ -30,10 +30,11 @@
          ^{:key t}
          [:level-item
           (render-link t)])]]]]
+   [:div.break "sequencing method: " (render-link (:sequencing_method evidence))]
    [:div.break "meets criteria for inclusion: "
     (if (:meets_inclusion_criteria evidence)
       "true"
-      "false")]
+      "false")]   
    [:div.break "estimated lod score: " (:estimated_lod_score evidence)]
    [:div.break "published lod score: " (:published_lod_score evidence)]
    [:div.break "phenotype positive allele positive count "
@@ -65,6 +66,7 @@
                     :title (:label source)}
                    (:short_citation source)]])]
    [:div.column.is-two-thirds
+    [:div.break (render-link (:sequencing_method evidence))]
     [:div.columns
      [:div.column "affected: " (:phenotype_positive_allele_positive_count evidence)]
      [:div.column "unaffected: " (:phenotype_negative_allele_negative_count evidence)]]

@@ -119,6 +119,9 @@
     ... on ProbandEvidence {
       ...probandFields
     }
+    ... on VariantEvidence {
+      ...variantFields
+    }
     ... on Segregation {
       ...segregationFields
     }
@@ -155,6 +158,20 @@ fragment probandFields on ProbandEvidence {
     canonical_reference {
       curie
     }
+  }
+}
+
+fragment variantFields on VariantEvidence {
+  variant {
+    curie
+    label
+    canonical_reference {
+      curie
+    }
+  }
+  zygosity {
+    curie
+    label
   }
 }
 
@@ -214,6 +231,9 @@ fragment statementFields on Statement {
     ... on ProbandEvidence {
       ...probandFields
     }
+    ... on VariantEvidence {
+      ...variantFields
+    }
     ... on Segregation {
       ...segregationFields
     }
@@ -230,10 +250,16 @@ fragment statementFields on Statement {
         ... on Segregation {
           ...segregationFields
         }
+        ... on VariantEvidence {
+          ...variantFields
+        }
       }
     }
     ... on ProbandEvidence {
       ...probandFields
+    }
+    ... on VariantEvidence {
+      ...variantFields
     }
     ... on Segregation {
       ...segregationFields
@@ -252,10 +278,7 @@ fragment statementFields on Statement {
     }
   }
   score
-}
-
-"
-)
+}")
 
 (re-frame/reg-fx
  :common/scroll-to-top

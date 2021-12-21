@@ -3,6 +3,7 @@
             [genegraph-ui.views.generic-resource]
             [genegraph-ui.views.statement]
             [genegraph-ui.views.proband-evidence]
+            [genegraph-ui.views.variant-evidence]
             [genegraph-ui.views.bibliographic-resource]
             [genegraph-ui.views.segregation]
             [genegraph-ui.common.events :as common-events]

@@ -169,6 +169,10 @@ fragment variantFields on VariantEvidence {
       curie
     }
   }
+  zygosity {
+    curie
+    label
+  }
 }
 
 fragment segregationFields on Segregation {
@@ -226,6 +230,9 @@ fragment statementFields on Statement {
     }
     ... on ProbandEvidence {
       ...probandFields
+    }
+    ... on VariantEvidence {
+      ...variantFields
     }
     ... on Segregation {
       ...segregationFields

@@ -17,7 +17,10 @@
      (map render-link (:type evidence))]]
    [:div.box.block
     [:h6.title.is-6 "Variant"]
-    [:p.block (get-in evidence [:variant :label])]]])
+    [:p.block (get-in evidence [:variant :label])]]
+   (when (:zygosity evidence)
+     [:div.box.block
+      (render-link (:zygosity evidence))])])
 
 (defmethod render-compact "VariantEvidence" [evidence]
   ^{:key evidence}
@@ -30,4 +33,7 @@
                    (:short_citation source)]])]
    [:div.column
     [:p.block (get-in evidence [:variant :label])]
+    (when (:zygosity evidence)
+     [:p.block
+      (render-link (:zygosity evidence))])
     [:div.break (:description evidence)]]]) 

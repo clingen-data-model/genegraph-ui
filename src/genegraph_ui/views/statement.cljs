@@ -2,6 +2,8 @@
   (:require [genegraph-ui.protocols
              :refer
              [render-full render-compact render-link]]
+            [genegraph-ui.common.helpers :refer [curie-label trim-iso-date]]
+            [markdown.core :as md :refer [md->html]]
             [reitit.frontend.easy :refer [href]]))
 
 (defn render-compact-grouped-by-type [resources]
@@ -14,38 +16,60 @@
        [:div.box
         (render-compact resource {:skip [:type]})])]))
 
+;; (defn statement-definition [statement]
+;;   [:div.columns.is-multiline
+;;    [:div.column.is-narrow
+;;     (render-link (:subject statement))]
+;;    [:div.column.is-narrow
+;;     (render-link (:predicate statement))]
+;;    [:div.column.is-narrow
+;;     (render-link (:object statement))]
+;;    (for [qualifier (:qualifier statement)]
+;;      ^{:key qualifier}
+;;      [:div.column.is-narrow
+;;       (render-link qualifier)])])
+
+
+(defn statement-definition [statement]
+  [:div.block
+   [:div.block.mb-0 (render-link (:subject statement))]
+   [:div.block.mb-0 (render-link (:predicate statement))]
+   [:div.block.mb-0 (render-link (:object statement))]
+   (for [qualifier (:qualifier statement)]
+     [:div.block.mb-0 (render-link qualifier) " "])])
+
+(defn statement-types [statement]
+  [:div.level
+   [:div.level-left
+    (for [t (:type statement)]
+      ^{:key t}
+      [:level-item.tag
+       (render-link t)])]])
+
+(defn statement-provenance [statement]
+  (for [contribution (:contributions statement)]
+    [:div.block
+     [:div.block.mb-0 (render-link (:attributed_to contribution))]
+     [:div.block.mb-0 (render-link (:realizes contribution))]
+     [:div.block.mb-0 (trim-iso-date (:date contribution))]]))
+
+(defn statement-score [statement]
+  (when (:score statement)
+    [:h5.title.is-5 "score: " (:score statement)]))
+
 (defmethod render-full "Statement" [statement]
-  [:section.section
-   [:div.box
-    [:h5.title.is-5
-     (:curie statement)]
-    [:h6.subtitle.is-6
-     [:div.level
-      [:div.level-left
-       (for [t (:type statement)]
-         ^{:key t}
-         [:level-item
-          (render-link t)])]]]]
-   [:div.columns.is-multiline
-    [:div.column.is-narrow
-     (render-link (:subject statement))]
-    [:div.column.is-narrow
-     (render-link (:predicate statement))]
-    [:div.column.is-narrow
-     (render-link (:object statement))]
-    (for [qualifier (:qualifier statement)]
-      ^{:key qualifier}
-      [:div.column.is-narrow
-       (render-link qualifier)])]
-   (for [contribution (:contributions statement)]
-     [:div.columns
-      [:div.column (render-link (:attributed_to contribution))]
-      [:div.column (render-link (:realizes contribution))]
-      [:div.column (:date contribution)]])
-   [:div.block
-    (:description statement)]
-   (when (:score statement)
-     [:h5.title.is-5 "score: " (:score statement)])
+  [:div
+   [:div.columns
+    [:div.column.is-two-fifths
+     [:h3.title.is-3
+      (curie-label statement)]
+     (statement-types statement)
+     (statement-definition statement)
+     (statement-score statement)
+     (statement-provenance statement)]
+    [:div.column
+     [:div.block.is-family-secondary
+      (:description statement)]]]
    [:h5.title.is-5 "statements about"]
    [:div.block
     (render-compact-grouped-by-type (:subject_of statement))]
@@ -103,4 +127,19 @@
        [:div.columns
         [:div.column (render-compact evidence)]])]]))
 
-
+(defmethod render-link "Statement"
+  [resource]
+  ^{:key resource}
+  [:a
+   {:href (href :resource resource)}
+   (cond (:label resource) (:label resource)
+         
+         ;; (and (get-in resource [:subject :label])
+         ;;      (get-in resource [:predicate :label])
+         ;;      (get-in resource [:object :label]))
+         ;; [:div
+         ;;  (get-in resource [:subject :label]) " "
+         ;;  (get-in resource [:predicate :label]) " "
+         ;;  (get-in resource [:object :label])]
+         
+         :else (curie-label resource))])

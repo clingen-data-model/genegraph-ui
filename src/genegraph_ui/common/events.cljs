@@ -80,6 +80,7 @@
     results {
       curie
       label
+      description
     }
   }
 }")
@@ -213,6 +214,20 @@ fragment basicFields on Resource {
 fragment statementFields on Statement {
   subject {
     ...basicFields
+    ... on Statement {
+      subject {
+        curie
+        label
+      }
+      predicate {
+        curie
+        label
+      }
+      object {
+        curie
+        label
+      }
+    }
   }
   predicate {
     ...basicFields
@@ -222,6 +237,10 @@ fragment statementFields on Statement {
   }
   qualifier {
     ...basicFields
+  }
+  specified_by {
+    curie
+    label
   }
   direct_evidence: evidence {
     ...basicFields
@@ -337,3 +356,9 @@ fragment statementFields on Statement {
  (fn [db [_]]
    (js/console.log "menu toggled")
    (update db :common/menu-hidden not)))
+
+(re-frame/reg-event-db
+ :common/set-params
+ (fn [db [_ params]]
+   (js/console.log "params")
+   (assoc db :common/params params)))

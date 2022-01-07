@@ -9,6 +9,7 @@
             [reitit.frontend :as rf]
             [reitit.frontend.controllers :as rfc]
             [reitit.frontend.easy :as rfe]
+            [genegraph-ui.pages.find.views :as find]
             [genegraph-ui.pages.resource.views :as resource]
             [genegraph-ui.pages.home.views :as home]
             [genegraph-ui.pages.gene.views :as gene]
@@ -55,6 +56,16 @@
        :start (fn [& params](js/console.log "Entering home page"))
        ;; Teardown can be done here.
        :stop  (fn [& params] (js/console.log "Leaving home page"))}]}]
+   ["find"
+    {:name :find
+     :view find/find-page
+     :link-text "find"
+     :controllers
+     [{:parameters {:query [:find-text]}
+       :start (fn [params]
+                (js/console.log (str params)))
+       :stop  (fn [& params]
+                (js/console.log "leaving find page"))}]}]
    ["documentation"
     {:name :documentation
      :view documentation/home

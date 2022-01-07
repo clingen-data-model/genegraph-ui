@@ -103,3 +103,8 @@
  ::menu-hidden
  (fn [db]
    (:common/menu-hidden db)))
+
+(re-frame/reg-sub
+ ::params
+ (fn [db]
+   (:common/params db)))

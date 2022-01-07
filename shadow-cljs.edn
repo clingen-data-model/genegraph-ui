@@ -2,6 +2,7 @@
 {:source-paths ["src"]
  :dependencies [[re-frame "1.1.1"]
                 [re-graph "0.1.14"]
+                [markdown-clj "1.10.8"]
                 [metosin/reitit "0.5.13"]
                 [metosin/reitit-schema "0.5.13"]
                 [metosin/reitit-frontend "0.5.13"]

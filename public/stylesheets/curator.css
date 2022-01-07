@@ -13,3 +13,7 @@
 pre {
     white-space: pre-wrap;
 }
+
+.logo {
+    font-family: stymie, serif;
+}

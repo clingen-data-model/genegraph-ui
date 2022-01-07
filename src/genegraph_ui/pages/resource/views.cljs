@@ -41,18 +41,12 @@
   (let [resource @(subscribe [::subs/resource])
         is-loading @(subscribe [::common-subs/is-loading])
         menu-hidden @(subscribe [::common-subs/menu-hidden])]
-    [:section.section
+    [:div
      (common-views/navbar)
-     [:div.columns
-      (if menu-hidden
-        [:div.column.is-narrow
-         [:span.icon.is-pulled-right
-          {:on-click #(dispatch [:common/toggle-menu])}
-          [:i.fas.fa-angle-double-right]]]
-        [:div.column.is-one-third
-         (common-views/side-panel)])
-      (if is-loading
-        (loader)
-        [:div.column
-         (render-full resource)
-         (query)])]]))
+     [:section.section
+      [:div.columns
+       (if is-loading
+         (loader)
+         [:div.column
+          (render-full resource)
+          (query)])]]]))

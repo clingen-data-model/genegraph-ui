@@ -5,7 +5,7 @@
             [reitit.frontend.easy :refer [href]]))
 
 (defmethod render-full "GenericResource" [resource]
-  [:section.section
+  [:div
    [:h3.title.is-3 (or (:label resource)
                        (:curie resource))]
    [:h6.subtitle.is-6

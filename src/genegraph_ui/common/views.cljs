@@ -26,11 +26,31 @@
 
 (defn navbar []
   (let [navbar-burger-active (when @(subscribe [::common-subs/navbar-burger-active])
-                               "is-active")]
-    [:nav.navbar {:role "navigation" :aria-label "main navigation"}
+                               "is-active")
+        search-option @(subscribe [::common-subs/current-search-option])]
+    [:nav.navbar
+     {:role "navigation" :aria-label "main navigation"}
      [:div.navbar-brand
-      [:a.navbar-item {:href "/"}
+      [:a.navbar-item.has-text-link.logo.is-size-4
+       {:href "/"}
+       [:img {:src "images/clingen-logo-vp.svg"
+              :width "30%"
+              :height "auto"}]
+       
        "genegraph"]
+      [:div.navbar-item.field
+       [:form.control.has-icons-right
+        {:on-submit
+         #(do (dispatch [:common/search
+                         (.-value (.getElementById js/document "find-text-navbar"))])
+              (rfe/push-state :find)
+              (.preventDefault %)
+              false)}
+        [:input.input.is-rounded
+         {:id "find-text-navbar"
+          :name "find-text"
+          :placeholder (s/lower-case (name search-option))}]
+        [:span.icon.is-right [:i.fas.fa-search]]]]
       [:a.navbar-burger {:role "button"
                          :aria-label "menu"
                          :aria-expanded "false"
@@ -41,11 +61,12 @@
        [:span {:aria-hidden "true"}]]]
      [:div.navbar-menu
       {:class navbar-burger-active}
-      [:a.navbar-item "data"
-       ]
-      [:a.navbar-item
-       {:href (rfe/href :documentation)}
-       "documentation"]]]))
+      [:div.navbar-start
+]
+      [:div.navbar-end
+       [:a.navbar-item
+        {:href (rfe/href :documentation)}
+        "documentation"]]]]))
 
 (defn panel-search []
   (let [search-option @(subscribe [::common-subs/current-search-option])]

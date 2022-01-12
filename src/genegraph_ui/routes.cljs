@@ -9,6 +9,7 @@
             [reitit.frontend :as rf]
             [reitit.frontend.controllers :as rfc]
             [reitit.frontend.easy :as rfe]
+            [genegraph-ui.views.default]
             [genegraph-ui.pages.find.views :as find]
             [genegraph-ui.pages.resource.views :as resource]
             [genegraph-ui.pages.home.views :as home]

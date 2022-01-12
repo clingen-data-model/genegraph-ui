@@ -49,7 +49,7 @@
         [:input.input.is-rounded
          {:id "find-text-navbar"
           :name "find-text"
-          :placeholder (s/lower-case (name search-option))}]
+          :placeholder "search"}]
         [:span.icon.is-right [:i.fas.fa-search]]]]
       [:a.navbar-burger {:role "button"
                          :aria-label "menu"

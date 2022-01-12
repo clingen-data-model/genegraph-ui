@@ -70,4 +70,4 @@
     [:div.columns
      [:div.column "affected: " (:phenotype_positive_allele_positive_count evidence)]
      [:div.column "unaffected: " (:phenotype_negative_allele_negative_count evidence)]]
-    [:p.break (:description evidence)]]])
+    [:p.break.is-family-secondary (:description evidence)]]])

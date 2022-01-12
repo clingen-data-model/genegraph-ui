@@ -1,38 +1,37 @@
 (ns genegraph-ui.views.generic-resource
   (:require [genegraph-ui.protocols
              :refer
-             [render-full render-compact render-link]]
+             [render-full render-compact render-link render-list-item]]
+            [genegraph-ui.common.helpers :as helpers :refer [type-tags]]
             [reitit.frontend.easy :refer [href]]))
 
 (defmethod render-full "GenericResource" [resource]
-  [:div
-   [:h3.title.is-3 (or (:label resource)
-                       (:curie resource))]
-   [:h6.subtitle.is-6
-    [:div.level
-      [:div.level-right
-       (for [t (:type resource)]
-         ^{:key t}
-         [:div.level-item
-          (render-link t)])]]]
-   [:p.block (:description resource)]
-   (for [statements-by-type-map-entry (group-by #(-> % :type first) (:subject_of resource))]
-     ^{:key (key statements-by-type-map-entry)}
-     [:div
-      [:h6.title.is-6 (render-link (key statements-by-type-map-entry))]
-      (for [statement (val statements-by-type-map-entry)]
-        (render-compact statement {:skip [:type] :source (:curie resource)}))])])
+  [:div.columns
+   [:div.column.is-two-fifths
+    [:h3.title.is-3 (or (:label resource)
+                        (:curie resource))]
+    (type-tags resource)
+    [:p.block (:description resource)]]
+   [:div.column
+    (for [statement (:subject_of resource)]
+      ^{:key (key statement)}
+      (render-list-item statement))]])
 
 (defmethod render-compact "GenericResource" [resource]
   ^{:key resource}
-  [:div.columns.is-multiline
-   [:div.column.is-one-third
+  [:div.columns
+   [:div.column.is-two-fifths
     [:div.break (render-link resource)]
+    (type-tags resource)
     (when-let [source (:source resource)]
       [:div.break [:a.is-size-7
                    {:href (:iri source)
                     :title (:label source)}
                    (:short_citation source)]])]
-   (when-let [description (:description resource)]
-     [:div.column description])])
+   [:div.column
+    (for [statement (:subject_of resource)]
+      (render-list-item statement))]])
 
+(defmethod render-list-item "GenericResource" [resource]
+  [:div.columns.is-multiline.is-narrow
+   [:div.column (render-link resource)]])

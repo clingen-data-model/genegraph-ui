@@ -1,17 +1,9 @@
-(ns genegraph-ui.protocols
-  (:require [reitit.frontend.easy :refer [href]]
-            [genegraph-ui.common.helpers :refer [curie-label]]))
+(ns genegraph-ui.protocols)
 
 (defmulti render-full
   "Return a hiccup representation of the resource suitable for presentation
   as the main element on a page."
   :__typename)
-
-(defmethod render-full :default
-  [resource]
-  [:section.section
-   [:p "No renderer for resource"]
-   [:pre resource]])
 
 (defmulti render-compact
   "Return a hiccup representation of the resource suitable for presentation
@@ -23,18 +15,8 @@
   with a label appropriate for the resource type."
   :__typename)
 
-(defmethod render-compact :default
-  [resource]
-  [:div.columns
-   [:div.column.is-one-third
-    [:h5.title.is-5 (render-link resource)]]
-   [:div.column
-    [:p (:description resource)]]])
+(defmulti render-list-item
+  "return a definitional view of the item, generally intended
+  for a list of similar items"
+  :__typename)
 
-(defmethod render-link :default
-  [resource]
-  ^{:key resource}
-  [:a
-   {:href (href :resource resource)}
-   (or (:label resource)
-       (curie-label resource))])

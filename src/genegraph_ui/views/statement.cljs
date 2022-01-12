@@ -1,8 +1,8 @@
 (ns genegraph-ui.views.statement
   (:require [genegraph-ui.protocols
              :refer
-             [render-full render-compact render-link]]
-            [genegraph-ui.common.helpers :refer [curie-label trim-iso-date]]
+             [render-full render-compact render-link render-list-item]]
+            [genegraph-ui.common.helpers :refer [curie-label trim-iso-date type-tags]]
             [markdown.core :as md :refer [md->html]]
             [reitit.frontend.easy :refer [href]]))
 
@@ -16,23 +16,9 @@
        [:div.box
         (render-compact resource {:skip [:type]})])]))
 
-;; (defn statement-definition [statement]
-;;   [:div.columns.is-multiline
-;;    [:div.column.is-narrow
-;;     (render-link (:subject statement))]
-;;    [:div.column.is-narrow
-;;     (render-link (:predicate statement))]
-;;    [:div.column.is-narrow
-;;     (render-link (:object statement))]
-;;    (for [qualifier (:qualifier statement)]
-;;      ^{:key qualifier}
-;;      [:div.column.is-narrow
-;;       (render-link qualifier)])])
-
-
 (defn statement-definition [statement]
   [:div.block
-   [:div.block.mb-0 (render-link (:subject statement))]
+   [:div.block.mb-0 (render-list-item (:subject statement))]
    [:div.block.mb-0 (render-link (:predicate statement))]
    [:div.block.mb-0 (render-link (:object statement))]
    (for [qualifier (:qualifier statement)]
@@ -69,12 +55,9 @@
      (statement-provenance statement)]
     [:div.column
      [:div.block.is-family-secondary
-      (:description statement)]]]
-   [:h5.title.is-5 "statements about"]
-   [:div.block
-    (render-compact-grouped-by-type (:subject_of statement))]
-   [:h5.title.is-5 "used as evidence by"]
-   [:h5.title.is-5 "direct evidence"]
+      (:description statement)]
+     (for [linked-statement (:subject_of statement)]
+       (render-list-item linked-statement))]]
    [:div.block
     (for [evidence (:direct_evidence statement)]
       (render-compact evidence))]
@@ -118,7 +101,7 @@
           (render-link qualifier)])]
       (when-let [description (:description statement)]
         (let [description-segments (re-seq #"(?:\S+\W+\n?){1,50}" description)]
-          [:div.column
+          [:div.column.is-family-secondary
            (first description-segments)
            (when (< 1 (count description-segments))
              "...")]))]
@@ -133,13 +116,17 @@
   [:a
    {:href (href :resource resource)}
    (cond (:label resource) (:label resource)
-         
-         ;; (and (get-in resource [:subject :label])
-         ;;      (get-in resource [:predicate :label])
-         ;;      (get-in resource [:object :label]))
-         ;; [:div
-         ;;  (get-in resource [:subject :label]) " "
-         ;;  (get-in resource [:predicate :label]) " "
-         ;;  (get-in resource [:object :label])]
-         
          :else (curie-label resource))])
+
+(defmethod render-list-item "Statement" [resource]
+  [:div.columns
+   [:div.column.is-narrow
+    [:div.break (render-link resource)]
+    (type-tags resource)]
+   [:div.column
+    [:div.columns.is-multiline.p-2
+     [:div.column.is-narrow.p-1 (render-list-item (:subject resource))]
+     [:div.column.is-narrow.p-1 (render-link (:predicate resource))]
+     [:div.column.is-narrow.p-1 (render-link (:object resource))]
+     (for [qualifier (:qualifier resource)]
+       [:div.column.is-narrow.p-1 (render-link qualifier)])]]])

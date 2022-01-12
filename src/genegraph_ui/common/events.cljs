@@ -74,14 +74,40 @@
      {:db (assoc (:db cofx) :user nil)})))
 
 (def search-query
-  "query ($text: String, $type: Type) {
+"query ($text: String, $type: String) {
   find(text: $text, type: $type) {
-    count
     results {
+      __typename
       curie
       label
       description
+      type {
+        curie
+        label
+      }
+      subject_of {
+        __typename
+        curie
+        label
+        subject {
+          curie
+          label
+        }
+        predicate {
+          curie
+          label
+        }
+        object {
+          curie
+          label
+        }
+        qualifier {
+          curie
+          label
+        }
+      }
     }
+    count
   }
 }")
 
@@ -94,17 +120,14 @@
 (re-frame/reg-event-fx
  :common/search
  (fn [{:keys [db]} [_ search-text]]
-   (js/console.log "submitted search result "
-                   search-text
-                   " "
-                   (:common/search-option db))
+   (js/console.log search-query)
    {:db (assoc db
                :common/page 1
                :common/search-text search-text)
     :fx [[:dispatch
           [::re-graph/query
            search-query
-           {:text search-text :type (:common/search-option db :GENE)}
+           {:text search-text}
            [:common/recieve-search-result]]]]}))
 
 (re-frame/reg-event-db
@@ -125,6 +148,54 @@
     }
     ... on Segregation {
       ...segregationFields
+    }
+    ... on Agent {
+      contributions {
+        artifact {
+          __typename
+          label
+          curie
+          ... on Statement {
+            subject {
+              __typename
+              curie
+              label
+              ... on Statement {
+                subject {
+                  curie
+                  label
+                }
+                predicate {
+                  curie
+                  label
+                }
+                object {
+                  curie
+                  label
+                }
+              }
+            }
+            predicate {
+              ...basicFields
+            }
+            object {
+              ...basicFields
+            }
+            qualifier {
+              ...basicFields
+            }
+            specified_by {
+              curie
+              label
+            }
+          }
+        }
+        date
+        realizes {
+          curie
+          label
+        }
+      }
     }
     subject_of {
       ...basicFields

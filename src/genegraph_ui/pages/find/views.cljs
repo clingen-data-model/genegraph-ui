@@ -12,10 +12,8 @@
     [:div
      (common-views/navbar)
      [:section.section
-      [:div.columns
-       [:div.column
-        (for [i (:results results)]
-          ^{:key i}
-          (render-compact i))]]]]))
+      (for [i (:results results)]
+        ^{:key i}
+        (render-compact i))]]))
 
 

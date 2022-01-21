@@ -29,6 +29,7 @@
                     :title (:label source)}
                    (:short_citation source)]])]
    [:div.column
+    [:p.block.is-family-secondary (:description resource)]
     (for [statement (:subject_of resource)]
       (render-list-item statement))]])
 

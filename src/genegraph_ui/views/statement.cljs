@@ -78,9 +78,12 @@
      [:div.columns
       [:div.column.is-one-third
        (cond
-         (:score statement) [:a.break.has-text-weight-semibold
-                             {:href (href :resource statement)}
-                             "score: " (:score statement)]
+         (:score statement) [:div.break
+                             [:a.has-text-weight-semibold
+                              {:href (href :resource statement)}
+                              "score: " (:score statement)]
+                             (when (:calculated_score statement)
+                               (str " (default " (:calculated_score statement) ")"))]
          :else [:a.break.icon
                 {:href (href :resource statement)}
                 [:i.fas.fa-file]])

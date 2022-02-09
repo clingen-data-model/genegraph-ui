@@ -283,6 +283,8 @@ fragment basicFields on Resource {
 }
 
 fragment statementFields on Statement {
+  score
+  calculated_score
   subject {
     ...basicFields
     ... on Statement {
@@ -317,6 +319,7 @@ fragment statementFields on Statement {
     ...basicFields
     ... on Statement {
       score
+      calculated_score
     }
     ... on ProbandEvidence {
       ...probandFields
@@ -332,6 +335,7 @@ fragment statementFields on Statement {
     ...basicFields
     ... on Statement {
       score
+      calculated_score
       evidence {
         ...basicFields
         ... on ProbandEvidence {
@@ -359,6 +363,7 @@ fragment statementFields on Statement {
     ...basicFields
     ... on Statement {
       score
+      calculated_score
       evidence {
         ...basicFields
         ... on ProbandEvidence {

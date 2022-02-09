@@ -75,6 +75,10 @@
     {:name :sepio-overview
      :view documentation/sepio-overview
      :link-text "SEPIO overview"}]
+   ["documentation/graphql-mapping"
+    {:name :graphql-mapping
+     :view documentation/graphql-mapping
+     :link-text "GraphQL mapping"}]
    ["documentation/examples"
     {:name :examples
      :view documentation/examples

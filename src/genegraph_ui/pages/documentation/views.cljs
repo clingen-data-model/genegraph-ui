@@ -10,7 +10,8 @@
       [:ul.menu-list
        [:li [:a {:href (rfe/href :documentation)}"introduction"]]
        [:li [:a {:href (rfe/href :sepio-overview)}"SEPIO overview"]]
-       [:li [:a {:href (rfe/href :examples)}"GraphQL examples"]]]
+       [:li [:a {:href (rfe/href :graphql-mapping)}"GraphQL mapping"]]
+       [:li [:a {:href (rfe/href :examples)}"query examples"]]]
       [:p.menu-label "concepts"]
       [:ul.menu-list
        [:li [:a
@@ -30,7 +31,7 @@
   [:section.section
    (common-views/navbar)
    [:div.columns
-    [:div.column.is-one-third
+    [:div.column.is-narrow
      (side-menu)]
     [:div.column.is-two-thirds
      [:h2.title.is-2 "Introduction"]
@@ -38,11 +39,13 @@
       [:a "SEPIO"]
       " presented using a GraphQL API. There are a few different paths to understanding the data and how to find what you're looking for; this site offers the ability to view concrete examples for queries, as well as explore the data directly, both through an example user interface as well as through the GraphiQL IDE. "]]]])
 
+
+
 (defn sepio-overview []
   [:section.section
    (common-views/navbar)
    [:div.columns
-    [:div.column.is-one-third
+    [:div.column.is-narrow
      (side-menu)]
     [:div.column.is-two-thirds
      [:h2.title.is-2 "SEPIO Overview"]
@@ -52,11 +55,24 @@
      [:h6.title.is-6 "examples"]
      [:p [:a {:href (rfe/href :resource {:curie "CGGV:a414c8fb-8c9d-4707-b2b8-f08c21b8cda6"})} "CALM3 contains causal mutations for Long QT Syndrome with Autosomal Dominant Inheritance"]]]]])
 
+(defn graphql-mapping []
+  [:section.section
+   (common-views/navbar)
+   [:div.columns
+    [:div.column.is-narrow
+     (side-menu)]
+    [:div.column.is-two-thirds
+     [:h2.title.is-2 "GraphQL mapping"]
+     [:div.is-family-secondary
+      [:p.block "The data model is based on SEPIO, an OWL ontology based on the Resource Description Framework (RDF). While it is not required to use RDF-based technologies to take advantage of SEPIO, there are advantages in doing so. As such, the backend database of Genegraph uses an RDF Triplestore (Apache Jena)"]
+      [:p.block "We present a GraphQL API for the front-end service of Genegraph. This offers substantially more flexibility than a traditional REST API, while using a technology more familiar to developers than those based on the RDF stack (such as a SPARQL endpoint). This means that a user can declare exactly how much data one would like to retrieve at a time. A full description of GraphQL is out of scope for this documentation (GraphQL has excellent documentation of its own)."]
+      [:p.block "When creating a GraphQL schema for Genegraph, we look to reflect the structure and semantics of the SEPIO model, while allowing "]]]]])
+
 (defn examples []
   [:section.section
    (common-views/navbar)
    [:div.columns
-    [:div.column.is-one-third
+    [:div.column.is-narrow
      (side-menu)]
     [:div.column.is-two-thirds
      [:h2.title.is-2 "examples"]
@@ -86,14 +102,13 @@
       ]
     }
   }
-}"]]
-    ]])
+}"]]]])
 
 (defn gene-validity []
   [:section.section
    (common-views/navbar)
    [:div.columns
-    [:div.column.is-one-third
+    [:div.column.is-narrow
      (side-menu)]
     [:div.column.is-two-thirds
      [:h2.title.is-2 "Gene Validity SEPIO profile"]]]])

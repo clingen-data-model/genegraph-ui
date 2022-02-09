@@ -7,10 +7,11 @@
             [reitit.frontend.easy :as rfe]))
 
 (defn home []
-  [:div
-   (common-views/navbar)
-   [:section.hero.is-link
-    [:div.hero-body
-     [:p.title "Genegraph"]]]])
+  [:section.hero.is-light
+   [:div.hero-head
+    (common-views/navbar)]
+   [:div.hero-body
+    ;[:div.container.has-text]
+    [:p.title "Genegraph!!1"]]])
 
 

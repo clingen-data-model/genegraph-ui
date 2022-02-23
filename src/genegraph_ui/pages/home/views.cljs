@@ -11,7 +11,6 @@
    [:div.hero-head
     (common-views/navbar)]
    [:div.hero-body
-    ;[:div.container.has-text]
-    [:p.title "Genegraph!!1"]]])
+    [:p.title "Genegraph"]]])
 
 

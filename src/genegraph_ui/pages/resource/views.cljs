@@ -7,6 +7,7 @@
             [genegraph-ui.views.bibliographic-resource]
             [genegraph-ui.views.segregation]
             [genegraph-ui.views.agent]
+            [genegraph-ui.views.family]
             [genegraph-ui.common.events :as common-events]
             [genegraph-ui.common.subs :as common-subs]
             [genegraph-ui.common.views :as common-views]

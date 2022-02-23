@@ -18,7 +18,11 @@
    [:div.box.block
     [:h6.title.is-6 "Variants"]
     (for [variant (:variants evidence)]
-      [:p.block (:label variant)])]])
+      [:p.block (:label variant)])]
+   [:div.box.block
+    [:h6.title.is-6 "scored variants"]
+    (for [variant-score (:variant_evidence evidence)]
+      (render-compact variant-score))]])
 
 (defmethod render-compact "ProbandEvidence" [evidence]
   ^{:key evidence}

@@ -149,6 +149,16 @@
     ... on Segregation {
       ...segregationFields
     }
+    ... on Family {
+      segregation {
+        ... basicFields
+        ... segregationFields
+      }
+      probands {
+        ... basicFields
+        ... probandFields 
+      }
+    }
     ... on Agent {
       contributions {
         artifact {
@@ -214,6 +224,63 @@
           label
         }
       }
+      direct_evidence: evidence {
+	...basicFields
+	... on Statement {
+	  score
+	  calculated_score
+	}
+	... on ProbandEvidence {
+	  ...probandFields
+	}
+	... on VariantEvidence {
+	  ...variantFields
+	}
+	... on Segregation {
+	  ...segregationFields
+	}
+      }
+      genetic_evidence: evidence(transitive: true, class: $genetic_evidence_type) {
+	...basicFields
+	... on Statement {
+	  score
+	  calculated_score
+	  evidence {
+            ...basicFields
+            ... on ProbandEvidence {
+              ...probandFields
+            }
+            ... on Segregation {
+              ...segregationFields
+            }
+            ... on VariantEvidence {
+              ...variantFields
+            }
+	  }
+	}
+	... on ProbandEvidence {
+	  ...probandFields
+	}
+	... on VariantEvidence {
+	  ...variantFields
+	}
+	... on Segregation {
+	  ...segregationFields
+	}
+      }
+      experimental_evidence: evidence(transitive: true, class: $experimental_evidence_type) {
+	...basicFields
+	... on Statement {
+	  score
+	  calculated_score
+	  evidence {
+            ...basicFields
+            ... on ProbandEvidence {
+              ...probandFields
+            }
+	  }
+	}
+      }
     }
     __typename
     used_as_evidence_by {
@@ -231,6 +298,10 @@ fragment probandFields on ProbandEvidence {
       curie
     }
   }
+  variant_evidence {
+    ...basicFields
+    ...variantFields
+  }
 }
 
 fragment variantFields on VariantEvidence {
@@ -242,6 +313,10 @@ fragment variantFields on VariantEvidence {
     }
   }
   zygosity {
+    curie
+    label
+  }
+  proband {
     curie
     label
   }
@@ -258,6 +333,11 @@ fragment segregationFields on Segregation {
   phenotype_negative_allele_negative_count
   phenotype_positive_allele_positive_count
   sequencing_method {
+    curie
+    label
+  }
+  family {
+    __typename
     curie
     label
   }
@@ -315,64 +395,6 @@ fragment statementFields on Statement {
     curie
     label
   }
-  direct_evidence: evidence {
-    ...basicFields
-    ... on Statement {
-      score
-      calculated_score
-    }
-    ... on ProbandEvidence {
-      ...probandFields
-    }
-    ... on VariantEvidence {
-      ...variantFields
-    }
-    ... on Segregation {
-      ...segregationFields
-    }
-  }
-  genetic_evidence: evidence(transitive: true, class: $genetic_evidence_type) {
-    ...basicFields
-    ... on Statement {
-      score
-      calculated_score
-      evidence {
-        ...basicFields
-        ... on ProbandEvidence {
-          ...probandFields
-        }
-        ... on Segregation {
-          ...segregationFields
-        }
-        ... on VariantEvidence {
-          ...variantFields
-        }
-      }
-    }
-    ... on ProbandEvidence {
-      ...probandFields
-    }
-    ... on VariantEvidence {
-      ...variantFields
-    }
-    ... on Segregation {
-      ...segregationFields
-    }
-  }
-  experimental_evidence: evidence(transitive: true, class: $experimental_evidence_type) {
-    ...basicFields
-    ... on Statement {
-      score
-      calculated_score
-      evidence {
-        ...basicFields
-        ... on ProbandEvidence {
-          ...probandFields
-        }
-      }
-    }
-  }
-  score
 }")
 
 (re-frame/reg-fx

@@ -30,6 +30,7 @@
          ^{:key t}
          [:level-item
           (render-link t)])]]]]
+   [:div.break "family: "(render-link (:family evidence))]
    [:div.break "sequencing method: " (render-link (:sequencing_method evidence))]
    [:div.break "meets criteria for inclusion: "
     (if (:meets_inclusion_criteria evidence)

@@ -6,22 +6,30 @@
             [reitit.frontend.easy :refer [href]]))
 
 (defmethod render-full "GenericResource" [resource]
-  [:div.columns
-   [:div.column.is-two-fifths
-    [:h3.title.is-3 (or (:label resource)
-                        (:curie resource))]
-    (type-tags resource)
-    [:p.block (:description resource)]]
-   [:div.column
-    (for [statement (:subject_of resource)]
-      ^{:key (key statement)}
-      (render-list-item statement))]])
+  [:div
+   [:div.columns
+    [:div.column.is-two-fifths
+     [:h3.title.is-3 (or (:label resource)
+                         (:curie resource))]
+     [:h5.subtitle.is-5 (:curie resource)]
+     (type-tags resource)
+     [:p.block (:description resource)]]
+    [:div.column
+     (for [statement (:subject_of resource)]
+       ^{:key (key statement)}
+       (render-list-item statement))]]
+   (for [value-set (:in_scheme resource)]
+     [:div.columns
+      [:div.column.is-two-fifths
+       [:h5.title.is-5 "Value Set"]]
+      [:div.column
+       (render-compact value-set)]])])
 
 (defmethod render-compact "GenericResource" [resource]
   ^{:key resource}
   [:div.columns
    [:div.column.is-two-fifths
-    [:div.break (render-link resource)]
+    [:div.break (render-link resource) " (" (:curie resource) ")"]
     (type-tags resource)
     (when-let [source (:source resource)]
       [:div.break [:a.is-size-7

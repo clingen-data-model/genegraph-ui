@@ -139,6 +139,9 @@
 (def resource-query
   "query ($iri: String, $genetic_evidence_type: String, $experimental_evidence_type: String) {
   resource(iri: $iri) {
+    in_scheme {
+      ...basicFields
+    }
     ...basicFields
     ... on ProbandEvidence {
       ...probandFields
@@ -148,6 +151,11 @@
     }
     ... on Segregation {
       ...segregationFields
+    }
+    ... on ValueSet {
+      members {
+        ...basicFields
+      }
     }
     ... on Family {
       segregation {

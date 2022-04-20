@@ -21,7 +21,8 @@
   (let [query @(subscribe [::common-subs/current-query])
         params @(subscribe [::common-subs/current-params])
         response @(subscribe [::common-subs/query-response])
-        show-query @(subscribe [::common-subs/show-query])]
+        show-query @(subscribe [::common-subs/show-query])
+        errors @(subscribe [::subs/errors])]
     [:div
      [:button.button
       {:on-click #(dispatch [:common/toggle-show-query])}
@@ -33,7 +34,10 @@
         [:h6.title.is-6 "parameters"]
         [:pre params]
         [:h6.title.is-6 "response"]
-        [:pre response]])]))
+        [:pre response]
+        [:h6.title.is-6 "errors"]
+        ;; [:pre errors]
+        ])]))
 
 (defn loader []
   [:div.column.is-two-thirds.has-text-centered

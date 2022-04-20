@@ -11,7 +11,9 @@
             [reitit.frontend.easy :as rfe]
             [genegraph-ui.views.default]
             [genegraph-ui.pages.find.views :as find]
+            [genegraph-ui.pages.find.events :as find-events]
             [genegraph-ui.pages.resource.views :as resource]
+            [genegraph-ui.pages.resource.events :as resource-events]
             [genegraph-ui.pages.home.views :as home]
             [genegraph-ui.pages.gene.views :as gene]
             [genegraph-ui.pages.documentation.views :as documentation]
@@ -95,7 +97,8 @@
      [{:parameters {:path [:curie]}
        :start (fn [params]
                 (re-frame/dispatch
-                 [:common/select-value-object (get-in params [:path :curie])]))
+                 [:resource/select-resource
+                  (get-in params [:path :curie])]))
        :stop  (fn [& params] (js/console.log "Leaving resource page"))}]}]
 ;;    ["gene/:curie"
 ;;     {:name      :gene

@@ -7,3 +7,8 @@
    (:resource db)
    ;;(get-in db [:query :resource])
    ))
+
+(re-frame/reg-sub
+ ::errors
+ (fn [db]
+   (:common/query-error db)))

@@ -1,6 +1,7 @@
 (ns genegraph-ui.views.default
   (:require [genegraph-ui.protocols :as p :refer [render-full render-compact render-link render-list-item]]
             [reitit.frontend.easy :refer [href]]
+            [re-frame.core :refer [subscribe dispatch]]
             [genegraph-ui.common.helpers :as helpers :refer [type-tags]]
             [genegraph-ui.common.helpers :refer [curie-label]]))
 
@@ -28,7 +29,10 @@
   [resource]
   ^{:key resource}
   [:a
-   {:href (href :resource resource)}
+   {:href (href :resource resource)
+    :on-click #(dispatch [:common/navigate-to-resource
+                          (select-keys resource
+                                       [:curie :type :__typename])])}
    (or (:label resource)
        (curie-label resource))])
 

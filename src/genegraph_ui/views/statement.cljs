@@ -3,6 +3,7 @@
              :refer
              [render-full render-compact render-link render-list-item]]
             [genegraph-ui.common.helpers :refer [curie-label trim-iso-date type-tags]]
+            [genegraph-ui.query :as query :refer [defpartial defpage]]
             [markdown.core :as md :refer [md->html]]
             [reitit.frontend.easy :refer [href]]))
 
@@ -43,35 +44,131 @@
   (when (:score statement)
     [:h5.title.is-5 "score: " (:score statement)]))
 
-(defmethod render-full "Statement" [statement]
-  [:div
-   [:div.columns
-    [:div.column.is-two-fifths
-     [:h3.title.is-3
-      (curie-label statement)]
-     (statement-types statement)
-     (statement-definition statement)
-     (statement-score statement)
-     (statement-provenance statement)]
-    [:div.column
-     [:div.block.is-family-secondary
-      (:description statement)]
-     (for [linked-statement (:subject_of statement)]
-       (render-list-item linked-statement))]]
-   [:div.block
-    (for [evidence (:direct_evidence statement)]
-      (render-compact evidence))]
-   [:h5.title.is-5 "genetic evidence"]
-   [:div.block
-    (render-compact-grouped-by-type (:genetic_evidence statement))]
-   [:h5.title.is-5 "experimental evidence"]
-   [:div.block
-    (render-compact-grouped-by-type (:experimental_evidence statement))]])
+(defpage "Statement"
+  "query ($iri: String, $genetic_evidence_type: String, $experimental_evidence_type: String) {
+  resource(iri: $iri) {
+    ... compact
+    ... list_item
+    ...basicFields
+    subject_of {
+      ...basicFields
+      ...statementFields
+    }
+    ... on Statement {
+      ...statementFields
+      contributions {
+        attributed_to {
+          curie
+          label
+        }
+        date
+        realizes {
+          curie
+          label
+        }
+      }
+      direct_evidence: evidence { ...compact }
+      genetic_evidence: evidence(transitive: true, class: $genetic_evidence_type) { ...compact }
+      experimental_evidence: evidence(transitive: true, class: $experimental_evidence_type) { ...compact }
+    }
+    __typename
+    used_as_evidence_by {
+      ...statementFields
+      ...basicFields
+    }
+  }
+}
 
-(defmethod render-compact "Statement"
+fragment basicFields on Resource {
+  __typename
+  label
+  curie
+  description
+  source {
+    __typename
+    curie
+    iri
+    label
+    short_citation
+  }
+  type {
+    __typename
+    label
+    curie
+  }
+}
+
+fragment statementFields on Statement {
+  score
+  calculated_score
+  subject {
+    ...basicFields
+    ... on Statement {
+      subject {
+        curie
+        label
+      }
+      predicate {
+        curie
+        label
+      }
+      object {
+        curie
+        label
+      }
+    }
+  }
+  predicate {
+    ...basicFields
+  }
+  object {
+    ...basicFields
+  }
+  qualifier {
+    ...basicFields
+  }
+  specified_by {
+    curie
+    label
+  }
+}"
   ([statement]
-   (render-compact statement {}))
-  ([statement options]
+   [:div
+    [:div.columns
+     [:div.column.is-two-fifths
+      [:h3.title.is-3
+       (curie-label statement)]
+      (statement-types statement)
+      (statement-definition statement)
+      (statement-score statement)
+      (statement-provenance statement)]
+     [:div.column
+      [:div.block.is-family-secondary
+       (:description statement)]
+      (for [linked-statement (:subject_of statement)]
+        (render-list-item linked-statement))]]
+    [:div.block
+     (for [evidence (:direct_evidence statement)]
+       (render-compact evidence))]
+    [:h5.title.is-5 "genetic evidence"]
+    [:div.block
+     (render-compact-grouped-by-type (:genetic_evidence statement))]
+    [:h5.title.is-5 "experimental evidence"]
+    [:div.block
+     (render-compact-grouped-by-type (:experimental_evidence statement))]]))
+
+(defpartial compact "Statement"
+  "{__typename
+    label
+    curie
+    subject {curie label type {curie label}}
+    predicate {curie label type {curie label}}
+    object {curie label type {curie label}}
+    score
+    calculated_score
+    evidence { ...list_item }
+}"
+  ([statement]
    ^{:key statement}
    [:div.columns
     [:div.column
@@ -87,17 +184,14 @@
          :else [:a.break.icon
                 {:href (href :resource statement)}
                 [:i.fas.fa-file]])
-       (when-not (some #(= :type %) (:skip options))
-         [:div.break
-          (map render-link (:type statement))])
-       (when-not (= (:source options) (get-in statement [:subject :curie]))
-         [:div.break
-          (render-link (:subject statement))])
+       [:div.break
+        (map render-link (:type statement))]
+       [:div.break
+        (render-link (:subject statement))]
        [:div.break
         (render-link (:predicate statement))]
-       (when-not (= (:source options) (get-in statement [:object :curie]))
-         [:div.break
-          (render-link (:object statement))])
+       [:div.break
+        (render-link (:object statement))]
        (for [qualifier (:qualifier statement)]
          ^{:key qualifier}
          [:div.break
@@ -111,25 +205,28 @@
      (for [evidence (:evidence statement)]
        ^{:key evidence}
        [:div.columns
-        [:div.column (render-compact evidence)]])]]))
+        [:div.column (render-list-item evidence)]])]]))
 
-(defmethod render-link "Statement"
-  [resource]
-  ^{:key resource}
-  [:a
-   {:href (href :resource resource)}
-   (cond (:label resource) (:label resource)
-         :else (curie-label resource))])
 
-(defmethod render-list-item "Statement" [resource]
-  [:div.columns
-   [:div.column.is-narrow
-    [:div.break (render-link resource)]
-    (type-tags resource)]
-   [:div.column
-    [:div.columns.is-multiline.p-2
-     [:div.column.is-narrow.p-1 (render-list-item (:subject resource))]
-     [:div.column.is-narrow.p-1 (render-link (:predicate resource))]
-     [:div.column.is-narrow.p-1 (render-link (:object resource))]
-     (for [qualifier (:qualifier resource)]
-       [:div.column.is-narrow.p-1 (render-link qualifier)])]]])
+
+(defpartial list-item "Statement"
+  "{__typename
+    curie
+    label
+    subject {__typename type {curie label} curie label}
+    predicate {__typename type {curie label}  curie label}
+    object {__typename type {curie label} curie label}
+    qualifier {__typename type {curie label} curie label}}"
+  ([resource]
+   ^{:key resource}
+   [:div.columns
+    [:div.column.is-narrow
+     [:div.break (render-link resource)]
+     (type-tags resource)]
+    [:div.column
+     [:div.columns.is-multiline.p-2
+      [:div.column.is-narrow.p-1 (render-list-item (:subject resource))]
+      [:div.column.is-narrow.p-1 (render-link (:predicate resource))]
+      [:div.column.is-narrow.p-1 (render-link (:object resource))]
+      (for [qualifier (:qualifier resource)]
+        [:div.column.is-narrow.p-1 (render-link qualifier)])]]]))

@@ -41,7 +41,7 @@
       [:div.navbar-item.field
        [:form.control.has-icons-right
         {:on-submit
-         #(do (dispatch [:common/search
+         #(do (dispatch [:find/search
                          (.-value (.getElementById js/document "find-text-navbar"))])
               (rfe/push-state :find)
               (.preventDefault %)

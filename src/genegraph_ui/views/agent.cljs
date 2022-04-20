@@ -7,6 +7,9 @@
             [reitit.frontend.easy :refer [href]]))
 
 
+(def agent-fragment
+  "")
+
 (defmethod render-full "Agent" [resource]
   [:section.section
    [:div.columns

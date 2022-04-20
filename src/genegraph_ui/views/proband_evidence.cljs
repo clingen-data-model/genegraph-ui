@@ -2,29 +2,28 @@
   (:require [genegraph-ui.protocols
              :refer
              [render-full render-compact render-link]]
+            [genegraph-ui.query :as query :refer [defpartial defpage]]
             [reitit.frontend.easy :refer [href]]))
 
-(defmethod render-full "ProbandEvidence" [evidence]
-  [:section.section
-   [:div.box.block
-    [:h5.title.is-5
-     [:div.level 
-      [:div.level-right
-       [:div.level-item (:curie evidence)]]
-      [:div.level-left
-       [:div.level-item (render-link (:source evidence))]]]]
-    [:h6.subtitle.is-6
-     (map render-link (:type evidence))]]
-   [:div.box.block
-    [:h6.title.is-6 "Variants"]
-    (for [variant (:variants evidence)]
-      [:p.block (:label variant)])]
-   [:div.box.block
-    [:h6.title.is-6 "scored variants"]
-    (for [variant-score (:variant_evidence evidence)]
-      (render-compact variant-score))]])
 
-(defmethod render-compact "ProbandEvidence" [evidence]
+(defpage "ProbandEvidence"
+  "query ($iri: String) {
+  resource(iri: $iri) {
+...compact
+}
+}"
+  ([evidence]
+   (render-compact evidence)))
+
+(defpartial compact "ProbandEvidence"
+  "{__typename
+    label
+    curie    
+    source { curie iri label short_citation } 
+    variant_evidence { variant { curie label } }
+    description
+    }"
+  ([evidence]
   ^{:key evidence}
   [:div.columns
    [:div.column.is-one-third (render-link evidence)
@@ -34,7 +33,30 @@
                     :title (:label source)}
                    (:short_citation source)]])]
    [:div.column
-    (for [variant (:variants evidence)]
-      ^{:key variant}
-      [:div.break (:label variant)])
-    [:div.break (:description evidence)]]]) 
+    (for [variant-evidence (:variant_evidence evidence)]
+      ^{:key variant-evidence}
+      [:div.break (get-in variant-evidence [:variant :label])])
+    [:div.break (:description evidence)]]]))
+
+(defpartial list-item "ProbandEvidence"
+  "{__typename
+    label
+    curie    
+    source { curie iri label short_citation } 
+    variant_evidence { variant { curie label } }
+    description
+    }"
+  ([evidence]
+  ^{:key evidence}
+  [:div.columns
+   [:div.column.is-one-third (render-link evidence)
+    (when-let [source (:source evidence)]
+      [:div.break [:a.is-size-7
+                   {:href (:iri source)
+                    :title (:label source)}
+                   (:short_citation source)]])]
+   [:div.column
+    (for [variant-evidence (:variant_evidence evidence)]
+      ^{:key variant-evidence}
+      [:div.break (get-in variant-evidence [:variant :label])])
+    [:div.break (:description evidence)]]]))

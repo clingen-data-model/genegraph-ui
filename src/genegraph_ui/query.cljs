@@ -30,11 +30,20 @@
        (:fragment fragment-map)
        "\n"))
 
+(def default-fields-for-query
+  "
+__typename
+label
+curie
+type { __typename curie }
+")
+
 (defn- construct-fragment-for-scope [scope]
   (let [fragments-within-scope (filter #(= scope (:scope %)) (vals @fragments))]
     (str "\nfragment "
          (normalize-name-for-gql (name scope))
          " on Resource {\n"
+         default-fields-for-query
          (s/join (map #(str "... on "
                             (:type %)
                             " { ..."

@@ -38,5 +38,5 @@
 
 
 (defmethod render-list-item :default [resource]
-  [:div.columns.is-multiline.is-narrow
-   [:div.column (render-link resource)]])
+  ^{:key resource}
+  [:div.break.pl-2 (render-link resource)])

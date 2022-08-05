@@ -17,3 +17,11 @@ pre {
 .logo {
     font-family: stymie, serif;
 }
+
+/* not used */
+
+.subject {
+    outline: thin solid #6968ac;
+    border-radius: 2rem;
+    
+}

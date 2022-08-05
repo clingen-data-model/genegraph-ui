@@ -4,6 +4,7 @@
              [render-full render-compact render-link render-list-item]]
             [genegraph-ui.common.helpers :refer [curie-label trim-iso-date type-tags]]
             [genegraph-ui.query :as query :refer [defpartial defpage]]
+            [re-frame.core :refer [subscribe dispatch]]
             [markdown.core :as md :refer [md->html]]
             [reitit.frontend.easy :refer [href]]))
 
@@ -44,7 +45,7 @@
   (when (:score statement)
     [:h5.title.is-5 "score: " (:score statement)]))
 
-(defpage "Statement"
+#_(defpage "Statement"
   "query ($iri: String, $genetic_evidence_type: String, $experimental_evidence_type: String) {
   resource(iri: $iri) {
     ... compact
@@ -157,8 +158,113 @@ fragment statementFields on Statement {
     [:div.block
      (render-compact-grouped-by-type (:experimental_evidence statement))]]))
 
+(defn render-spo [statement]
+  (when (:subject statement)
+    [:div.block
+     (render-list-item (:subject statement))
+     (render-list-item (:predicate statement))
+     (render-list-item (:object statement))]))
+
+(defn render-contributions [statement]
+  (let [contributions (:contributions statement)]
+    (when (seq contributions)
+      [:div.block
+       [:h6.title.is-6 "contributions"]
+       (for [contribution (:contributions statement)]
+         [:div.columns
+          [:div.column.is-narrow (some->  contribution :date (subs 0 10) )]
+          [:div.column.is-narrow (render-link (:attributed_to contribution))]
+          [:div.column (render-link (:realizes contribution))]])
+       [:hr]])))
+
+(defn render-subject-of [statement]
+  (let [resources (:subject_of statement)]
+    (when (seq resources)
+      [:div.mb-6
+       [:h6.title.is-6 "subject of"]
+       (for [resource resources]
+         (render-list-item resource))])))
+
+(defn render-evidence [statement]
+  (let [evidence-list (:evidence statement)]
+    (when (seq evidence-list)
+      [:div.mb-6
+       [:h6.title.is-6 "evidence"]
+       (for [evidence evidence-list]
+         (render-compact evidence))])))
+
+(defn render-description [statement]
+  (when (:description statement)
+    [:div
+     [:h6.title.is-6 "description"]
+     [:div.columns
+      [:div.column.is-family-secondary
+       (:description statement)]]
+     [:hr]]))
+
+(defpage "Statement"
+  "
+query ($iri: String) {
+  resource(iri: $iri) {
+    __typename
+    label
+    curie
+    description
+    type {
+      __typename
+      curie
+      label
+    }
+    subject_of {
+       ...list_item
+    }
+    ... on Statement {
+      subject {
+        ...list_item
+      }
+      predicate {
+        ...list_item
+      }
+      object {
+        ...list_item
+      }
+      score
+      calculated_score
+      evidence {
+        ...compact
+      }
+      contributions {
+        attributed_to {
+          curie
+          label
+        }
+        date
+        realizes {
+          curie
+          label
+        }
+      }
+    }
+  }
+}
+"
+  ([statement]
+   ^{:key statement}
+   [:div
+    [:div.p-4.mb-6.subject
+     [:h3.title.is-3 (:curie statement)]
+     [:h5.subtitle.is-5 (type-tags statement)]
+     (when (:subject statement)
+       [:hr]
+       (render-spo statement))]
+    (render-description statement)
+    (render-contributions statement)
+    (render-subject-of statement)
+    (render-evidence statement)]))
+
 (defpartial compact "Statement"
   "{__typename
+    type {__typename curie label}
     label
     curie
     subject {curie label type {curie label}}
@@ -170,32 +276,13 @@ fragment statementFields on Statement {
 }"
   ([statement]
    ^{:key statement}
-   [:div.columns
+   [:div.columns.pb-4
     [:div.column
      [:div.columns
-      [:div.column.is-one-third
-       (cond
-         (:score statement) [:div.break
-                             [:a.has-text-weight-semibold
-                              {:href (href :resource statement)}
-                              "score: " (:score statement)]
-                             (when (:calculated_score statement)
-                               (str " (default " (:calculated_score statement) ")"))]
-         :else [:a.break.icon
-                {:href (href :resource statement)}
-                [:i.fas.fa-file]])
-       [:div.break
-        (map render-link (:type statement))]
-       [:div.break
-        (render-link (:subject statement))]
-       [:div.break
-        (render-link (:predicate statement))]
-       [:div.break
-        (render-link (:object statement))]
-       (for [qualifier (:qualifier statement)]
-         ^{:key qualifier}
-         [:div.break
-          (render-link qualifier)])]
+      [:div.column.is-narrow.is-size-5.has-text-weight-bold
+       (render-link statement)]
+      [:div.column.is-narrow (type-tags statement)]
+      [:div.column.is-narrow (render-spo statement)]
       (when-let [description (:description statement)]
         (let [description-segments (re-seq #"(?:\S+\W+\n?){1,50}" description)]
           [:div.column.is-family-secondary
@@ -205,7 +292,7 @@ fragment statementFields on Statement {
      (for [evidence (:evidence statement)]
        ^{:key evidence}
        [:div.columns
-        [:div.column (render-list-item evidence)]])]]))
+        [:div.column.py-1 (render-list-item evidence)]])]]))
 
 
 
@@ -213,6 +300,8 @@ fragment statementFields on Statement {
   "{__typename
     curie
     label
+    type {__typename curie label}
+    score
     subject {__typename type {curie label} curie label}
     predicate {__typename type {curie label}  curie label}
     object {__typename type {curie label} curie label}
@@ -220,13 +309,27 @@ fragment statementFields on Statement {
   ([resource]
    ^{:key resource}
    [:div.columns
-    [:div.column.is-narrow
-     [:div.break (render-link resource)]
-     (type-tags resource)]
-    [:div.column
-     [:div.columns.is-multiline.p-2
-      [:div.column.is-narrow.p-1 (render-list-item (:subject resource))]
-      [:div.column.is-narrow.p-1 (render-link (:predicate resource))]
-      [:div.column.is-narrow.p-1 (render-link (:object resource))]
-      (for [qualifier (:qualifier resource)]
-        [:div.column.is-narrow.p-1 (render-link qualifier)])]]]))
+    [:div.column.is-narrow.py-1 (render-link resource)]
+    [:div.column.is-narrow.py-1 (type-tags resource)]
+    (when (:subject resource)
+      [:div.column.py-1
+       [:div.columns.is-multiline.p-2
+        [:div.column.is-narrow.py-1 (render-link (:subject resource))]
+        [:div.column.is-narrow.py-1 (render-link (:predicate resource))]
+        [:div.column.is-narrow.py-1 (render-link (:object resource))]
+        (for [qualifier (:qualifier resource)]
+          [:div.column.is-narrow.py-1 (render-link qualifier)])]])]))
+
+(defpartial link "Statement"
+  ([statement]
+   ^{:key statement}
+   [:a
+    {:href (href :resource statement)
+     :on-click #(dispatch [:common/navigate-to-resource
+                           (select-keys statement
+                                        [:curie :type :__typename])])}
+    (cond (:label statement) (:label statement)
+          (:score statement) (str "score: " (:score statement))
+          
+          :else [:span.icon [:ion-icon {:name "diamond-outline"}]]
+          #_(curie-label statement))]))

@@ -39,4 +39,6 @@
 
 (defmethod render-list-item :default [resource]
   ^{:key resource}
-  [:div.break.pl-2 (render-link resource)])
+  [:div.columns
+   [:div.column.py-1
+    (render-link resource)]])

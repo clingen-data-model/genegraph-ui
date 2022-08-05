@@ -50,7 +50,7 @@
          {:id "find-text-navbar"
           :name "find-text"
           :placeholder "search"}]
-        [:span.icon.is-right [:i.fas.fa-search]]]]
+        [:span.icon.is-right [:ion-icon {:name "search-outline"}]]]]
       [:a.navbar-burger {:role "button"
                          :aria-label "menu"
                          :aria-expanded "false"

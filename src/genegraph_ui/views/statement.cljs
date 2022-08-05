@@ -4,9 +4,11 @@
              [render-full render-compact render-link render-list-item]]
             [genegraph-ui.common.helpers :refer [curie-label trim-iso-date type-tags]]
             [genegraph-ui.query :as query :refer [defpartial defpage]]
+            [genegraph-ui.pages.resource.subs :as subs]
             [re-frame.core :refer [subscribe dispatch]]
             [markdown.core :as md :refer [md->html]]
             [reitit.frontend.easy :refer [href]]))
+
 
 (defn render-compact-grouped-by-type [resources]
   (for [[type resources-with-type] (group-by #(-> % :type first) resources)]
@@ -191,7 +193,7 @@ fragment statementFields on Statement {
       [:div.mb-6
        [:h6.title.is-6 "evidence"]
        (for [evidence evidence-list]
-         (render-compact evidence))])))
+         (render-list-item evidence))])))
 
 (defn render-description [statement]
   (when (:description statement)

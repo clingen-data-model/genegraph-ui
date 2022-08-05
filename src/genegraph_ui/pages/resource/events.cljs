@@ -6,7 +6,6 @@
 
 (defn- nested-resources-map [m]
   (->> m
-       vals
        flatten
        (map #(::resources (meta %)))
        (remove nil?)
@@ -32,14 +31,16 @@
    (meta
     (walk/postwalk
      (fn [m]
-       (if (and (map? m) (:curie m))
-         (with-meta (symbol (:curie m))
-           {::resources
-            (assoc (nested-resources-map m)
-                   (symbol (:curie m))
-                   m)})
-         m))
+       (cond (and (map? m) (:curie m)) (with-meta (symbol (:curie m))
+                                         {::resources
+                                          (assoc (nested-resources-map (vals m))
+                                                 (symbol (:curie m))
+                                                 m)})
+             (map? m) (with-meta m
+                        {::resources (nested-resources-map (vals m))})
+             :else m))
      resource-containing-map))))
+
 
 (comment
   (flatten-resources
@@ -73,7 +74,8 @@
    (js/console.log (str errors))
    {:db (-> db
             (merge data)
-            (assoc :common/query-response data
+            (assoc :genegraph/resources (flatten-resources data)
+                   :common/query-response data
                    :common/query-error errors
                    :common/is-loading false))
     :fx [[:common/scroll-to-top]]}))

@@ -2,11 +2,21 @@
   (:require [re-frame.core :as re-frame]))
 
 (re-frame/reg-sub
- ::resource
+ ::resources
+ (fn [db]
+   (:genegraph/resources db)))
+
+(re-frame/reg-sub
+ ::page-resource
  (fn [db]
    (:resource db)
    ;;(get-in db [:query :resource])
    ))
+
+(re-frame/reg-sub
+ ::resource
+ (fn [db id]
+   (get-in db :resources id)))
 
 (re-frame/reg-sub
  ::errors

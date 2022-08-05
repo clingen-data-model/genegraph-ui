@@ -17,6 +17,11 @@
             [clojure.string :as s]
             [reitit.frontend.easy :as rfe]))
 
+(defn resources []
+  (let [resources @(subscribe [::subs/resources])]
+    [:pre
+     (with-out-str (cljs.pprint/pprint resources))]))
+
 (defn query []
   (let [query @(subscribe [::common-subs/current-query])
         params @(subscribe [::common-subs/current-params])
@@ -45,7 +50,7 @@
     [:i.fas.fa-circle-notch]]])
 
 (defn resource []
-  (let [resource @(subscribe [::subs/resource])
+  (let [resource @(subscribe [::subs/page-resource])
         is-loading @(subscribe [::common-subs/is-loading])
         menu-hidden @(subscribe [::common-subs/menu-hidden])]
     [:div

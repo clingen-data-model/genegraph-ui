@@ -16,7 +16,12 @@
 (re-frame/reg-sub
  ::resource
  (fn [db id]
-   (get-in db :resources id)))
+   (get-in db [:resources id])))
+
+(re-frame/reg-sub
+ ::element-state
+ (fn [db id]
+   (get-in db [:elements id])))
 
 (re-frame/reg-sub
  ::errors

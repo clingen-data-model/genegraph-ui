@@ -3,6 +3,7 @@
             ["firebase/auth"] ; must be loaded for firebase-app.auth to work
             [reagent.core :as reagent]
             [reagent.dom :as rdom]
+            [day8.re-frame.http-fx]
             [re-frame.core :as re-frame :refer [subscribe dispatch]]
             [re-graph.core :as re-graph]
             [genegraph-ui.pages.home.views :as home]

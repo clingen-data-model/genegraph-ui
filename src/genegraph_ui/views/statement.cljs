@@ -192,8 +192,9 @@ fragment statementFields on Statement {
     (when (seq evidence-list)
       [:div.mb-6
        [:h6.title.is-6 "evidence"]
-       (for [evidence evidence-list]
-         (render-list-item evidence))])))
+       (doall
+        (for [evidence evidence-list]
+          (render-list-item evidence)))])))
 
 (defn render-description [statement]
   (when (:description statement)
@@ -309,18 +310,23 @@ query ($iri: String) {
     object {__typename type {curie label} curie label}
     qualifier {__typename type {curie label} curie label}}"
   ([resource]
-   ^{:key resource}
-   [:div.columns
-    [:div.column.is-narrow.py-1 (render-link resource)]
-    [:div.column.is-narrow.py-1 (type-tags resource)]
-    (when (:subject resource)
-      [:div.column.py-1
-       [:div.columns.is-multiline.p-2
-        [:div.column.is-narrow.py-1 (render-link (:subject resource))]
-        [:div.column.is-narrow.py-1 (render-link (:predicate resource))]
-        [:div.column.is-narrow.py-1 (render-link (:object resource))]
-        (for [qualifier (:qualifier resource)]
-          [:div.column.is-narrow.py-1 (render-link qualifier)])]])]))
+   (let [state @(subscribe [::subs/element-state (:curie resource)])]
+     ^{:key resource}
+     [:div.columns
+      [:div.column.is-narrow.py-1
+       [:span.icon
+        {:on-click #(dispatch [:resource/expand-detail (:curie resource)])}
+        [:ion-icon {:name "add-circle-outline"}]]]
+      [:div.column.is-narrow.py-1 (render-link resource)]
+      [:div.column.is-narrow.py-1 (type-tags resource)]
+      (when (:subject resource)
+        [:div.column.py-1
+         [:div.columns.is-multiline.p-2
+          [:div.column.is-narrow.py-1 (render-link (:subject resource))]
+          [:div.column.is-narrow.py-1 (render-link (:predicate resource))]
+          [:div.column.is-narrow.py-1 (render-link (:object resource))]
+          (for [qualifier (:qualifier resource)]
+            [:div.column.is-narrow.py-1 (render-link qualifier)])]])])))
 
 (defpartial link "Statement"
   ([statement]
@@ -333,5 +339,4 @@ query ($iri: String) {
     (cond (:label statement) (:label statement)
           (:score statement) (str "score: " (:score statement))
           
-          :else [:span.icon [:ion-icon {:name "diamond-outline"}]]
-          #_(curie-label statement))]))
+          :else [:span.icon [:ion-icon {:name "diamond-outline"}]])]))

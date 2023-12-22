@@ -48,6 +48,11 @@
     :subject {:curie "MONDO:0000001" :label "Disease"}
     :predicate {:curie "HGNC:1234" :label "BRCA1"}}))
 
+(re-frame/reg-event-fx
+ :resource/expand-detail
+ (fn [{:keys [db]} [_ curie]]
+   (js/console.log (str "expansion triggered " curie))))
+
 (def type-query
   "query ($iri: String) {
   resource(iri: $iri) {

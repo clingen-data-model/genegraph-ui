@@ -1,23 +1,30 @@
 {
-  "scripts": {
-      "watch": "shadow-cljs watch app-local;",
-      "repl": "shadow-cljs cljs-repl app-local;",
-      "release": "shadow-cljs release ",
-      "release-local": "shadow-cljs release app-local;",
-      "release-dev": "shadow-cljs release app-dev;",
-      "server": "shadow-cljs server;",
-      "maven": "shadow-cljs pom;"
-  },
+    "scripts": {
+        "watch": "shadow-cljs watch app-local;",
+        "repl": "shadow-cljs cljs-repl app-local;",
+        "release": "shadow-cljs release ",
+        "release-local": "shadow-cljs release app-local;",
+        "release-dev": "shadow-cljs release app-dev;",
+        "server": "shadow-cljs server;",
+        "maven": "shadow-cljs pom;"
+    },
     "dependencies": {
-	"create-react-class": "^15.6.3",
-	"firebase": "7.24.0",
-	"highlight.js": "10.6.0",
-	"react": "^16.13.0",
-	"react-dom": "^16.13.0",
-	"react-flip-move": "^3.0.1",
-	"react-highlight.js": "1.0.7",
-	"shadow-cljs": "^2.16.0",
-	"xregexp": "^5.0.1"
+        "create-react-class": "^15.6.3",
+        "firebase": "7.24.0",
+        "highlight.js": "10.6.0",
+        "katex": "^0.12.0",
+        "markdown-it": "^12.2.0",
+        "markdown-it-block-image": "^0.0.3",
+        "markdown-it-sidenote": "gerwitz/markdown-it-sidenote#aa5de8ce3168b7d41cb33c3aed071a5f41ce0083",
+        "markdown-it-texmath": "^0.9.1",
+        "markdown-it-toc-done-right": "^4.2.0",
+        "punycode": "2.1.1",
+        "react": "^16.13.0",
+        "react-dom": "^16.13.0",
+        "react-flip-move": "^3.0.1",
+        "react-highlight.js": "1.0.7",
+        "shadow-cljs": "^2.16.0",
+        "xregexp": "^5.0.1"
     },
     "name": "genegraph-ui",
     "version": "0.0.1",

@@ -10,10 +10,12 @@
             [reitit.frontend.controllers :as rfc]
             [reitit.frontend.easy :as rfe]
             [genegraph-ui.views.default]
+            [genegraph-ui.pages.docs.events :as docs-events]
             [genegraph-ui.pages.find.views :as find]
             [genegraph-ui.pages.find.events :as find-events]
             [genegraph-ui.pages.resource.views :as resource]
             [genegraph-ui.pages.resource.events :as resource-events]
+            [genegraph-ui.pages.docs.views :as docs]
             [genegraph-ui.pages.home.views :as home]
             [genegraph-ui.pages.gene.views :as gene]
             [genegraph-ui.pages.documentation.views :as documentation]
@@ -69,6 +71,22 @@
                 (js/console.log (str params)))
        :stop  (fn [& params]
                 (js/console.log "leaving find page"))}]}]
+   ["docs"
+    {:name :docs
+     :view docs/page
+     :link-text "docs"
+     :controllers
+     [{:start (fn [params]
+                (re-frame/dispatch [::docs-events/fetch-markdown "index"]))}]}]
+   ["docs/:page"
+    {:name :docs-page
+     :view docs/page
+     :link-text "docs"
+     :controllers
+     [{:parameters {:path [:page]}
+       :start (fn [params]
+                (re-frame/dispatch [::docs-events/fetch-markdown
+                                    (get-in params [:path :page])]))}]}]
    ["documentation"
     {:name :documentation
      :view documentation/home
